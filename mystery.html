@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Bones of Briar Hollow — A Forensic Mystery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141b27; --paper:#f7f2e6; --paper2:#efe6d2; --ink:#2a251e; --muted:#6d6457;
+  --red:#b23a2e; --teal:#2c7a6f; --gold:#c8962b; --blue:#2d5d8a; --line:#d9ccb0;
+  --cork:#7a5b3c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#26324d,#141b27 60%) fixed;color:var(--ink);
+  font-family:'Source Sans 3',system-ui,-apple-system,Segoe UI,sans-serif;font-size:18px;line-height:1.55;min-height:100vh}
+h1,h2,h3,.type{font-family:'Special Elite','Courier New',monospace;font-weight:400;letter-spacing:.01em}
+h1{font-size:clamp(2rem,6vw,3.2rem);line-height:1.1;margin:.2em 0 .3em}
+h2{font-size:1.7rem;margin:0 0 .4em}
+h3{font-size:1.25rem;margin:1.2em 0 .4em}
+p{margin:.5em 0 .9em}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+.topbar{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px 18px;background:rgba(12,17,26,.94);backdrop-filter:blur(6px);color:#e9e2d2;border-bottom:1px solid #2c3850}
+.brand{font-family:'Special Elite',monospace;font-size:17px;white-space:nowrap}
+.brand span{color:var(--gold)}
+.meta{display:flex;gap:12px;align-items:center;font-size:15px;color:#c9c0ae}
+.filebtn{display:none;background:#2a3550;color:#fff;border:1px solid #44527a;border-radius:20px;padding:6px 12px;font-size:15px}
+.filebtn b{background:var(--gold);color:#1a1a1a;border-radius:10px;padding:0 7px;margin-left:4px}
+
+.layout{max-width:1200px;margin:0 auto;padding:22px 16px 70px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+main{outline:none;min-width:0}
+.card{background:var(--paper);border-radius:14px;padding:26px clamp(18px,4vw,32px);box-shadow:0 12px 34px rgba(0,0,0,.4);position:relative;margin-bottom:18px}
+.card::before{content:"";position:absolute;inset:0;border-radius:14px;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0 31px,rgba(120,100,60,.05) 31px 32px)}
+.kicker{font-family:'Special Elite',monospace;color:var(--red);font-size:.9rem;text-transform:uppercase;letter-spacing:.12em}
+.small{font-size:.92rem;color:var(--muted)}
+.lede{font-size:1.15rem}
+
+/* casefile */
+aside{position:sticky;top:72px;background:#f3ecdc;border-radius:12px;padding:16px 16px 12px;box-shadow:0 10px 28px rgba(0,0,0,.4);max-height:calc(100vh - 92px);overflow:auto}
+aside h3{margin:0 0 6px;display:flex;justify-content:space-between;align-items:center}
+aside .tab{position:absolute;top:-12px;left:18px;background:#e7d8b6;padding:2px 12px;border-radius:6px 6px 0 0;font-family:'Special Elite';font-size:13px}
+.clue{display:flex;gap:10px;padding:9px 0;border-top:1px dashed #cdbd99;font-size:.93rem;line-height:1.35;animation:pop .4s ease}
+.clue .ic{font-size:1.3rem;line-height:1}
+.clue b{display:block}
+.empty{color:var(--muted);font-size:.93rem}
+.closefile{display:none;background:none;border:none;font-size:1.4rem}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* dialog + notes */
+.say{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);padding:12px 14px;border-radius:10px;margin:14px 0}
+.say .av{flex:0 0 42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:1.4rem;background:#e4ecf5}
+.say .who{font-weight:700;font-size:.9rem;color:var(--blue);text-transform:uppercase;letter-spacing:.05em}
+.say p{margin:.2em 0 .4em}
+.note{background:#fff8e6;border:1px solid #ecd9a6;border-left:5px solid var(--gold);padding:12px 14px;border-radius:10px;margin:14px 0;font-size:.97rem}
+.note b.h{display:block;font-family:'Special Elite';color:#8a6512;margin-bottom:2px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;border:none;border-radius:10px;padding:12px 20px;font-weight:700;margin:6px 8px 6px 0;transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--red);color:#fff;box-shadow:0 3px 0 #7d2219}
+.btn.primary:hover{background:#c4443a}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn.ghost:hover{border-color:var(--blue)}
+.btn.dark{background:#2a3550;color:#fff;box-shadow:0 3px 0 #161d2e}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.q{margin:18px 0}
+.prompt{font-weight:700;font-size:1.08rem}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:#fff;border:2px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--ink);transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:var(--blue);background:#f8fbff}
+.opt.right{background:#e1f3ee;border-color:var(--teal)}
+.opt.wrong{background:#f9e4e1;border-color:var(--red);opacity:.85;text-decoration:line-through;text-decoration-color:rgba(178,58,46,.5)}
+.opt:disabled{cursor:default}
+.opt small{display:block;color:var(--muted);font-size:.9rem}
+.fb{margin-top:12px;padding:11px 14px;border-radius:10px;font-size:.98rem;animation:pop .3s ease}
+.fb.ok{background:#e1f3ee;border:1px solid #9fd2c4}
+.fb.no{background:#fbecd9;border:1px solid #efc58e}
+.next{margin-top:12px}
+
+/* board */
+.boardwrap{background:var(--cork);background-image:radial-gradient(rgba(0,0,0,.18) 1px,transparent 1.5px),radial-gradient(rgba(255,255,255,.08) 1px,transparent 1.5px);
+  background-size:9px 9px,13px 13px;border-radius:14px;padding:22px;box-shadow:inset 0 0 0 8px #4e3a25,0 12px 34px rgba(0,0,0,.4);margin-bottom:18px}
+.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px}
+.loc{position:relative;text-align:left;background:var(--paper);border:none;border-radius:4px;padding:22px 16px 16px;box-shadow:0 6px 14px rgba(0,0,0,.35);color:var(--ink);min-height:150px;transition:transform .15s}
+.loc:nth-child(odd){transform:rotate(-1deg)} .loc:nth-child(even){transform:rotate(.8deg)}
+.loc:hover:not(:disabled){transform:rotate(0) scale(1.03)}
+.loc::before{content:"";position:absolute;top:7px;left:50%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff7a6b,#a3261a);box-shadow:0 2px 2px rgba(0,0,0,.4)}
+.loc .ic{font-size:2rem;display:block}
+.loc .t{font-family:'Special Elite';font-size:1.2rem;display:block;margin:4px 0 2px}
+.loc .d{font-size:.92rem;color:var(--muted);display:block}
+.loc:disabled{filter:grayscale(.8);opacity:.7;cursor:not-allowed}
+.badge{position:absolute;top:10px;right:10px;font-family:'Special Elite';font-size:.8rem;color:var(--teal);border:2px solid var(--teal);padding:0 6px;border-radius:4px;transform:rotate(6deg)}
+.hint{background:#fff;border-radius:10px;padding:10px 14px;margin:0 0 16px;font-size:.98rem;display:flex;gap:10px}
+
+/* figures */
+.figrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;align-items:end;margin:12px 0}
+.fig{width:100%;height:auto;display:block}
+.figbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.figbox.ev{border:2px solid var(--red)}
+.figbox .cap{font-size:.9rem;color:var(--muted);margin-top:4px}
+.figbox.ev .cap{color:var(--red);font-weight:700}
+.scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin:12px 0}
+.scrollx svg{min-width:600px}
+.clues3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0}
+.cluecard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.96rem}
+.cluecard b{display:block;font-family:'Special Elite';color:var(--blue);margin-bottom:4px}
+.profile{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.pill{background:#2a3550;color:#fff;border-radius:20px;padding:4px 12px;font-size:.92rem}
+.inrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+input[type=number],input[type=text]{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;width:160px}
+input#detname{width:min(100%,340px)}
+select{font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:8px;background:#fff;max-width:100%}
+.marks{display:grid;gap:12px;margin:12px 0}
+.mark{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.mark.okm{border-color:var(--teal);background:#eef8f5}
+.mark.nom{border-color:var(--red);background:#fdf0ee}
+.mark b{font-family:'Special Elite';color:var(--blue)}
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:10px 0}
+.def{border-radius:10px;padding:10px 12px;font-size:.93rem;background:#fff;border-top:5px solid}
+.def b{display:block}
+
+/* spots */
+.spots{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:14px 0}
+.spot{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:14px 10px;text-align:center;color:var(--ink)}
+.spot .ic{font-size:2rem;display:block}
+.spot.done{border-style:solid;border-color:var(--teal);background:#eef8f5}
+.spot:hover{border-color:var(--blue)}
+.found{background:#fff;border-radius:12px;border:1px solid var(--line);padding:14px 16px;margin:12px 0;animation:pop .3s}
+
+/* suspects */
+.suspects{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:14px 0}
+.sus{background:#fff;border:2px solid var(--line);border-radius:12px;padding:14px;text-align:left;color:var(--ink);display:flex;gap:12px;align-items:flex-start}
+.sus:hover:not(:disabled){border-color:var(--blue)}
+.ava{flex:0 0 54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:'Special Elite';font-size:1.25rem;box-shadow:inset 0 -4px 0 rgba(0,0,0,.2)}
+.ava.big{flex-basis:76px;height:76px;font-size:1.7rem}
+.sus .nm{font-weight:700;display:block}
+.sus .rl{font-size:.9rem;color:var(--muted);display:block}
+.sus .st{font-size:.85rem;display:block;margin-top:4px}
+.qbtns{display:grid;gap:8px;margin:12px 0}
+.transcript{border-left:3px solid var(--line);padding-left:14px;margin:12px 0}
+.transcript .qq{font-weight:700;color:var(--blue);margin-top:10px}
+.transcript .aa{margin:.2em 0 .6em}
+
+/* blood */
+.wells{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.wellbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.wellbox .lbl{font-weight:700;margin:4px 0}
+.wellbox .res{font-size:.88rem;min-height:1.3em;color:var(--muted)}
+.wellbox button{font-size:.9rem;padding:8px 10px;margin:4px 0 0}
+table.types{border-collapse:collapse;width:100%;margin:10px 0;font-size:.96rem;background:#fff}
+table.types th,table.types td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+table.types th{background:var(--paper2)}
+.checks{display:grid;gap:8px;margin:10px 0}
+.checks label{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.checks input{width:20px;height:20px}
+
+/* gel */
+.gelwrap{background:#0f1726;border-radius:12px;padding:10px;margin:12px 0;overflow-x:auto}
+.gelwrap svg{min-width:520px;width:100%;height:auto;display:block}
+.lane{cursor:pointer}
+.lane:hover .lanebg{fill:rgba(255,255,255,.08)}
+.lane.sel .lanebg{fill:rgba(200,150,43,.22);stroke:#c8962b;stroke-width:2}
+
+/* endings */
+.ending{border:3px double var(--red)}
+.stampbig{display:inline-block;font-family:'Special Elite';color:var(--red);border:4px solid var(--red);padding:4px 16px;font-size:1.8rem;transform:rotate(-5deg);margin:6px 0 12px;border-radius:6px;opacity:.9}
+.stampbig.alt{color:#8a6512;border-color:#8a6512}
+.cert{background:linear-gradient(135deg,#fffaf0,#f3e7c9);border:2px solid var(--gold);border-radius:14px;padding:20px;text-align:center;margin:16px 0}
+.cert .rank{font-family:'Special Elite';font-size:1.8rem;color:#8a6512}
+.chain{counter-reset:c;list-style:none;padding:0;margin:12px 0}
+.chain li{counter-increment:c;padding:8px 0 8px 40px;position:relative;border-bottom:1px dashed var(--line)}
+.chain li::before{content:counter(c);position:absolute;left:0;top:8px;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.9rem}
+details.edu{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+details.edu summary{cursor:pointer;font-weight:700}
+details.edu li{margin:4px 0}
+.stamp{display:inline-block;font-family:'Special Elite';color:var(--red);border:2px solid var(--red);padding:2px 10px;border-radius:4px;transform:rotate(-3deg);font-size:.9rem}
+
+@media (max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .filebtn{display:inline-block}
+  aside{display:none;position:fixed;top:60px;left:10px;right:10px;max-height:calc(100vh - 80px);z-index:40}
+  aside.open{display:block}
+  .closefile{display:inline}
+}
+@media (max-width:520px){
+  body{font-size:17px}
+  .wells{grid-template-columns:1fr}
+  .brand{font-size:15px}
+  .meta #progress{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><a href="index.html" style="color:#c9c0ae;text-decoration:none;margin-right:12px;font-family:'Source Sans 3',sans-serif;font-size:15px">← All stations</a>🔎 Briar Hollow <span>Case #BH-27</span></div>
+  <div class="meta"><span id="progress"></span><button class="filebtn" id="fileBtn" onclick="toggleFile()">📁 Case File<b id="clueCount">0</b></button></div>
+</header>
+<div class="layout">
+  <main id="stage" tabindex="-1" aria-live="polite"></main>
+  <aside id="casefile" aria-label="Case file">
+    <h3><span>📁 Case File</span><button class="closefile" onclick="toggleFile()" aria-label="Close case file">✕</button></h3>
+    <div id="cluelist"></div>
+    <p class="small" id="mistakeline"></p>
+  </aside>
+</div>
+<noscript><p style="color:#fff;padding:20px">This mystery needs JavaScript turned on.</p></noscript>
+
+<script>
+/* ---------- state ---------- */
+const fresh = () => ({ name:'Detective', mistakes:0, done:{}, clues:[], searched:{}, sus:{gordon:{q:{}},theo:{q:{}},alan:{q:{}},megan:{q:{}}},
+  meganSample:null, wells:{}, judgeDenied:false, scene:'title', arg:null, flash:'' });
+let S = fresh();
+const Q = {};
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+
+function go(id, arg){ S.scene=id; S.arg=arg; draw(); window.scrollTo({top:0}); stage.focus({preventScroll:true}); closeFile(); }
+function draw(){ stage.innerHTML = SC[S.scene](S.arg); renderFile(); }
+function oops(){ S.mistakes++; renderFile(); }
+function addClue(k, ic, t, d){ if(!S.clues.find(c=>c.k===k)){ S.clues.push({k,ic,t,d}); renderFile(); } }
+function has(k){ return !!S.clues.find(c=>c.k===k); }
+function renderFile(){
+  $('#cluelist').innerHTML = S.clues.length ? S.clues.map(c=>`<div class="clue"><span class="ic">${c.ic}</span><span><b>${c.t}</b>${c.d}</span></div>`).join('')
+    : '<p class="empty">No clues yet. Every clue you find will be pinned here.</p>';
+  $('#clueCount').textContent = S.clues.length;
+  $('#progress').textContent = `Clues: ${S.clues.length} · Wrong turns: ${S.mistakes}`;
+  $('#mistakeline').textContent = S.scene==='title' ? '' : `Detective ${S.name} · Wrong turns so far: ${S.mistakes}`;
+}
+function toggleFile(){ $('#casefile').classList.toggle('open'); }
+function closeFile(){ $('#casefile').classList.remove('open'); }
+function esc(s){ return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- helpers ---------- */
+function say(who, av, html){ return `<div class="say"><div class="av">${av}</div><div><div class="who">${who}</div>${html}</div></div>`; }
+const RUIZ = h => say('Det. Casey Morgan','🕵️‍♀️',h);
+const KIM  = h => say('Dr. Lena Ward · forensic anthropologist','🦴',h);
+const SAM  = h => say('Sam Taylor · blood lab','🩸',h);
+const JORD = h => say('Jordan Bell · DNA analyst','🧬',h);
+function note(title, html){ return `<div class="note"><b class="h">🔬 ${title}</b>${html}</div>`; }
+function fb(id, ok, msg){ const el=document.getElementById(id); if(!el) return; el.className='fb '+(ok?'ok':'no'); el.innerHTML=(ok?'✅ ':'🤔 ')+msg; el.hidden=false; }
+const backBtn = (label='← Back to the Case Board') => `<button class="btn ghost" onclick="go('hub')">${label}</button>`;
+
+/* multiple choice: choices = [[html, correct, feedback], ...] */
+function mc(qid, prompt, choices, nextHtml='', onRight=null){
+  Q[qid] = {choices, onRight, solved:false};
+  return `<div class="q" id="${qid}"><p class="prompt">${prompt}</p><div class="opts">
+    ${choices.map((c,i)=>`<button class="opt" onclick="pick('${qid}',${i})">${c[0]}</button>`).join('')}
+  </div><div class="fb" id="${qid}-fb" hidden></div><div class="next" id="${qid}-next" hidden>${nextHtml}</div></div>`;
+}
+function pick(qid, i){
+  const q=Q[qid]; if(!q||q.solved) return;
+  const c=q.choices[i]; const btns=document.querySelectorAll(`#${qid} > .opts > .opt`); const b=btns[i];
+  if(c[1]){ q.solved=true; b.classList.add('right'); btns.forEach(x=>x.disabled=true); fb(qid+'-fb',true,c[2]);
+    document.getElementById(qid+'-next').hidden=false; if(q.onRight) q.onRight(); }
+  else { oops(); b.classList.add('wrong'); b.disabled=true; fb(qid+'-fb',false,c[2]); }
+}
+
+/* ---------- figures ---------- */
+function pelvis(angle, caption, evidence){
+  const cx=130, vy=150, L=62, a=angle/2*Math.PI/180;
+  const lx=cx-L*Math.sin(a), rx=cx+L*Math.sin(a), y2=vy+L*Math.cos(a);
+  const s = angle>90 ? 1.13 : .9;
+  const accL=[78,140], accR=[182,140];
+  const oL=[(accL[0]+cx+lx)/3+2,(accL[1]+vy+y2)/3], oR=[(accR[0]+cx+rx)/3-2,(accR[1]+vy+y2)/3];
+  const ar=26, ax1=cx-ar*Math.sin(a), ay=vy+ar*Math.cos(a), ax2=cx+ar*Math.sin(a);
+  const wing = side => { const m = side<0 ? (x=>cx-(cx-x)*s) : (x=>cx+(x-cx)*s);
+    const X = x => side<0 ? m(x) : m(2*cx-x);
+    return `<path d="M${X(116)} 62 C ${X(96)} 30, ${X(40)} 22, ${X(26)} 52 C ${X(18)} 78, ${X(44)} 112, ${X(side<0?accL[0]:78)} 132 L ${X(108)} 122 Z"/>`; };
+  return `<div class="figbox ${evidence?'ev':''}"><svg class="fig" viewBox="0 0 260 235" role="img" aria-label="Simplified pelvis with a subpubic angle of about ${angle} degrees">
+   <g fill="#efe4c8" stroke="#7a6545" stroke-width="2" stroke-linejoin="round">${wing(-1)}${wing(1)}
+     <path d="M112 56 L148 56 L141 118 L130 136 L119 118 Z" fill="#e6d8b4"/></g>
+   <g stroke="#7a6545" stroke-width="16" stroke-linecap="round" fill="none">
+     <path d="M${accL[0]} ${accL[1]} L${cx-4} ${vy} M${cx-4} ${vy} L${lx} ${y2} M${accL[0]} ${accL[1]} L${lx} ${y2}"/>
+     <path d="M${accR[0]} ${accR[1]} L${cx+4} ${vy} M${cx+4} ${vy} L${rx} ${y2} M${accR[0]} ${accR[1]} L${rx} ${y2}"/></g>
+   <g stroke="#efe4c8" stroke-width="11" stroke-linecap="round" fill="none">
+     <path d="M${accL[0]} ${accL[1]} L${cx-4} ${vy} L${lx} ${y2} Z M${accR[0]} ${accR[1]} L${cx+4} ${vy} L${rx} ${y2} Z"/></g>
+   <ellipse cx="${oL[0]}" cy="${oL[1]}" rx="7" ry="10" fill="#fff" stroke="#7a6545" stroke-width="1.5"/>
+   <ellipse cx="${oR[0]}" cy="${oR[1]}" rx="7" ry="10" fill="#fff" stroke="#7a6545" stroke-width="1.5"/>
+   <circle cx="${accL[0]}" cy="${accL[1]}" r="11" fill="#d8c69c" stroke="#7a6545" stroke-width="2"/>
+   <circle cx="${accR[0]}" cy="${accR[1]}" r="11" fill="#d8c69c" stroke="#7a6545" stroke-width="2"/>
+   <path d="M${ax1} ${ay} A ${ar} ${ar} 0 0 0 ${ax2} ${ay}" fill="none" stroke="#b23a2e" stroke-width="3"/>
+   <text x="${cx}" y="${Math.max(ay,y2)+28}" text-anchor="middle" font-family="Special Elite" font-size="18" fill="#b23a2e">≈ ${angle}°</text>
+  </svg><div class="cap">${caption}</div></div>`;
+}
+function femurSVG(){
+  const x0=30, k=12, xe=x0+44.5*k; let t='';
+  for(let i=0;i<=100;i++){ const cm=i/2, x=x0+cm*k, big=cm%5===0, whole=cm%1===0, h=big?18:whole?11:6;
+    t+=`<line x1="${x}" y1="104" x2="${x}" y2="${104+h}" stroke="#3a3326" stroke-width="${big?1.6:1}"/>`;
+    if(big) t+=`<text x="${x}" y="138" font-size="13" text-anchor="middle" fill="#3a3326" font-family="Source Sans 3">${cm}</text>`; }
+  return `<svg viewBox="0 0 640 150" class="fig" role="img" aria-label="A femur lying on a centimeter ruler; its far end lines up halfway between 44 and 45 centimeters">
+   <rect x="20" y="100" width="612" height="44" rx="4" fill="#f3d98b" stroke="#a88a3a"/>${t}
+   <text x="622" y="122" font-size="12" text-anchor="end" fill="#3a3326">cm</text>
+   <line x1="${x0}" y1="18" x2="${x0}" y2="104" stroke="#b23a2e" stroke-width="1.5" stroke-dasharray="4 3"/>
+   <line x1="${xe}" y1="18" x2="${xe}" y2="104" stroke="#b23a2e" stroke-width="1.5" stroke-dasharray="4 3"/>
+   <g fill="#efe4c8" stroke="#7a6545" stroke-width="2" stroke-linejoin="round">
+     <path d="M${x0+18} 42 L${x0+52} 50 L${x0+52} 68 L${x0+20} 60 Z"/>
+     <ellipse cx="${x0+58}" cy="52" rx="16" ry="13"/>
+     <path d="M${x0+52} 49 C ${x0+200} 56, ${xe-200} 55, ${xe-40} 46 L ${xe-40} 74 C ${xe-200} 66, ${x0+200} 68, ${x0+52} 70 Z"/>
+     <ellipse cx="${xe-22}" cy="52" rx="22" ry="15"/><ellipse cx="${xe-22}" cy="70" rx="22" ry="14"/>
+     <circle cx="${x0+15}" cy="48" r="15"/></g>
+   <text x="${x0+15}" y="14" font-size="11" text-anchor="middle" fill="#b23a2e">hip end</text>
+   <text x="${xe}" y="14" font-size="11" text-anchor="middle" fill="#b23a2e">knee end</text>
+  </svg>`;
+}
+function rng(seed){ let s=seed; return ()=>((s=(s*9301+49297)%233280)/233280); }
+function well(key, clumps, added){
+  const r=rng(key.length*97+13); let dots='';
+  if(added && clumps){ for(let i=0;i<34;i++){ const ang=r()*Math.PI*2, d=Math.sqrt(r())*34; dots+=`<circle cx="${50+Math.cos(ang)*d}" cy="${50+Math.sin(ang)*d}" r="${1.8+r()*3.6}" fill="#7d1418"/>`; } }
+  const fill = !added ? '#f4efe6' : clumps ? '#f2cdc6' : 'url(#smooth)';
+  return `<svg viewBox="0 0 100 100" width="110" height="110" role="img" aria-label="${!added?'empty test well':clumps?'clumped blood drop':'smooth blood drop'}">
+    <defs><radialGradient id="smooth" cx="40%" cy="35%"><stop offset="0" stop-color="#d7414a"/><stop offset="1" stop-color="#9b1c24"/></radialGradient></defs>
+    <circle cx="50" cy="50" r="44" fill="#fff" stroke="#c9bfae" stroke-width="3"/>
+    <circle cx="50" cy="50" r="38" fill="${fill}"/>${dots}
+    ${!added?'<text x="50" y="55" text-anchor="middle" font-size="11" fill="#9a907f">sample only</text>':''}</svg>`;
+}
+const GEL = { ladder:[1000,900,800,700,600,500,400,300,200,100],
+  E:[850,600,420,230], V:[700,520,380,160], gordon:[900,520,300,180], theo:[700,600,380,300], alan:[800,450,350,230], megan:[850,600,420,230] };
+function gelSVG(sel){
+  const lanes=[['L','Ladder',null],['E','Trowel blood',null],['V','Nell (tooth)','V'],['S1','Gordon','gordon'],['S2','Theo','theo'],['S3','Alan','alan'],['S4','Megan','megan']];
+  const key={L:'ladder',E:'E',V:'V',S1:'gordon',S2:'theo',S3:'alan',S4:'megan'};
+  const y = bp => 70 + (Math.log10(1100)-Math.log10(bp))/(Math.log10(1100)-Math.log10(90))*300;
+  let g='';
+  lanes.forEach((ln,i)=>{ const x=30+i*68, click=ln[2];
+    const bands = GEL[key[ln[0]]].map(bp=>`<rect x="${x+8}" y="${y(bp)-3}" width="46" height="6" rx="2" fill="${ln[0]==='E'?'#ffd36b':'#9fe8ff'}" filter="url(#glow)"/>`).join('');
+    g += `<g ${click?`class="lane ${sel===click?'sel':''}" onclick="gelPick('${click}')" role="button" tabindex="0" aria-label="Lane ${ln[0]}: ${ln[1]}" onkeydown="if(event.key==='Enter')gelPick('${click}')"`:''}>
+      <rect class="lanebg" x="${x+2}" y="44" width="58" height="350" rx="6" fill="transparent"/>
+      <rect x="${x+10}" y="50" width="42" height="9" rx="2" fill="#0a0f19" stroke="#55657f"/>
+      ${bands}
+      <text x="${x+31}" y="24" text-anchor="middle" fill="#fff" font-family="Special Elite" font-size="15">${ln[0]}</text>
+      <text x="${x+31}" y="38" text-anchor="middle" fill="#a9b7cc" font-size="10.5">${ln[1]}</text></g>`; });
+  return `<svg viewBox="0 0 520 420" role="img" aria-label="DNA gel with seven lanes">
+    <defs><filter id="glow" x="-30%" y="-200%" width="160%" height="500%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <rect x="22" y="44" width="486" height="352" rx="8" fill="#1b2a44" stroke="#33486b"/>
+    <text x="10" y="60" fill="#ff8a7a" font-size="16" font-weight="700">−</text>
+    <text x="8" y="392" fill="#7fe0a0" font-size="16" font-weight="700">+</text>
+    ${g}</svg>`;
+}
+
+/* ---------- suspects ---------- */
+const SUS = {
+  gordon:{name:'Gordon Pike', role:'Greenhouse groundskeeper', ini:'GP', col:'#5b7a3a', type:'A+',
+    intro:'A tall man with soil under his fingernails twists his cap in his hands.'},
+  theo:{name:'Theo Hartwell', role:'Nell’s younger brother', ini:'TH', col:'#3d6a96', type:'B+',
+    intro:'He looks tired. He keeps glancing at an old photo of Nell on the table.'},
+  alan:{name:'Dr. Alan Whitcombe', role:'Rival botanist', ini:'AW', col:'#7a4f8a', type:'O−',
+    intro:'He checks his watch twice before you even sit down.'},
+  megan:{name:'Megan Reed', role:'Nell’s business partner', ini:'MR', col:'#a3542f', type:'B+',
+    intro:'She smiles a little too quickly. A thin pink scar runs across her right palm.'}
+};
+function questions(who){
+  const Qs = {
+    gordon:[
+      ['How did you know Nell?','“I kept these grounds for twelve years. Nell fired me the week before she disappeared — said I’d drowned her prize orchids. I was angry, sure. But I’d never hurt her.”'],
+      ['Where were you the night she vanished?','“Home. Alone. Watching the ballgame. Nobody can vouch for me, I guess.”'],
+      ...(S.done.trowel?[['Ask about the trowel engraved “G.P.”','“I engrave G.P. on every tool so they don’t wander off. They all hang in the shed — and that shed is never locked. Anybody could’ve grabbed one.”']]:[])
+    ],
+    theo:[
+      ['How did you know Nell?','“She was my big sister. After she went missing, I inherited her half of the greenhouse. I know that looks bad. We argued about selling the place, sure — siblings argue.”'],
+      ['Where were you the night she vanished?','“At my daughter’s school concert, then home. My wife can confirm… though I know a wife isn’t the best alibi.”'],
+      ['Tell me about your family.','“Funny thing — Mom and I are both blood type B, but Nell took after Dad. Type O, same as him.”', ['family','👨‍👩‍👧','Hartwell family blood types','Mom and Theo: type B. Dad and Nell: type O.']]
+    ],
+    alan:[
+      ['How did you know Nell?','“We competed for the same research grants. She accused me — publicly — of faking my data. It nearly ended my career. Was I upset? Of course I was.”'],
+      ['Where were you the night she vanished?','“Giving a talk at a conference three hours away. I drove home late that night. Alone.”'],
+      ['Have you been to the greenhouse?','“Not in years. Orchids are Nell’s thing. Were. Were her thing.”']
+    ],
+    megan:[
+      ['How did you know Nell?','“We ran the orchid business together. Honestly? I think she just ran off. She was stressed about money.”'],
+      ['Where were you the night she vanished?','“I was… home. Doing paperwork. Alone.”'],
+      ['Ask about the scar on her right palm.','“This? I cut it on a broken flowerpot. Ages ago. Why would that matter?”', ['scar','✋','Megan’s scar','A healed cut across her right palm. She says it came from a flowerpot.']],
+      ...(has('ledger')?[['Show her the torn ledger page.','Her smile disappears. “Those sales were… business decisions. Nell knew all about them.” She folds her arms and stops talking.']]:[])
+    ]
+  };
+  return Qs[who];
+}
+const interviewsDone = () => Object.keys(SUS).every(k=>S.sus[k].asked);
+function askQ(who,i){ S.sus[who].q[i]=true; const q=questions(who)[i]; if(q[2]) addClue(...q[2]); draw(); }
+function askSample(who){
+  S.sus[who].asked=true;
+  if(who!=='megan'){ S.sus[who].type=SUS[who].type; addClue('type-'+who,'🧪',`${SUS[who].name}: sample`,`Gave a cheek swab and blood sample. Blood type ${SUS[who].type}.`); }
+  else addClue('type-megan','🚫','Megan: sample','Refused to give a DNA or blood sample.');
+  draw();
+}
+
+/* ---------- scenes ---------- */
+const SC = {};
+
+SC.title = () => `<section class="card">
+  <span class="stamp">CASE FILE · BH-27</span>
+  <h1>The Bones of Briar Hollow</h1>
+  <p class="lede">A forensic mystery you solve with real science. Read the bones, type the blood, match the DNA, and find out who did it.</p>
+  <p><label for="detname"><b>What should we call you, Detective?</b></label></p>
+  <div class="inrow"><input id="detname" type="text" maxlength="24" placeholder="Your detective name" onkeydown="if(event.key==='Enter')start()">
+  <button class="btn primary" onclick="start()">Open the case →</button></div>
+  <p class="small">About 10–15 minutes · Works on phones, tablets and computers · Great for teams of 2–3</p>
+  <details class="edu"><summary>For educators &amp; event hosts</summary>
+    <p><b>What players practice</b></p>
+    <ul>
+      <li><b>Skeletal anatomy:</b> estimating sex from the pelvis (subpubic angle, sciatic notch), age from growth plates and joint surfaces, and height from femur length.</li>
+      <li><b>Injury timing:</b> telling antemortem (healed), perimortem and postmortem marks apart.</li>
+      <li><b>Blood typing:</b> reading ABO/Rh agglutination, and why a blood type narrows a list but can’t name a person.</li>
+      <li><b>DNA fingerprinting:</b> how gel electrophoresis separates DNA by size and charge, reading a band match, and why relatives share bands.</li>
+      <li><b>Evidence handling:</b> contamination, chain of custody, warrants and “abandoned” DNA.</li>
+    </ul>
+    <p><b>How it branches</b>: players choose where to go on the Case Board. Rash choices, like arresting the first person whose name turns up, lead to alternate endings that rewind with an explanation. Wrong answers never end the game; they lower the final detective rank and explain the science.</p>
+    <p><b>Content note</b>: the case is a homicide, but nothing is described graphically.</p>
+    <p><b>Simplifications</b>: real labs now compare about 20 DNA markers (STRs) with machines rather than reading a gel by eye, and real bone estimates come with wider error ranges. The ideas are the same.</p>
+    <p><b>Event tip</b>: the final screen shows a rank, so players can show it to a host for a sticker or badge.</p>
+  </details>
+</section>`;
+function start(){ const v=($('#detname').value||'').trim(); S.name = v ? esc(v) : 'Detective'; go('intro'); }
+
+SC.intro = () => `<section class="card">
+  <div class="kicker">Briar Hollow · Tuesday, 8:02 a.m.</div><h2>Something under the trail</h2>
+  ${RUIZ(`<p>Morning, Detective ${S.name}. Trail volunteers clearing brush behind the old <b>Hartwell Greenhouse</b> dug up something that wasn’t a tree root.</p>
+  <p>It’s a human skeleton. It’s been out there a while, maybe a couple of years. Nobody knows who this was or how they ended up there.</p>
+  <p>Your job: find out <b>who</b> this person was, <b>what happened</b>, and <b>who is responsible</b>. Science does the talking in this case. Ready?</p>`)}
+  ${note('How to play',`<ul style="margin:.3em 0 0;padding-left:1.2em">
+    <li>Visit places on the <b>Case Board</b>. Some unlock once you’ve found the right clues.</li>
+    <li>Everything you learn is pinned to your <b>Case File</b>.</li>
+    <li>Wrong answers won’t end the game, but they count against your final detective rank.</li>
+    <li>Choose carefully. Some decisions lead to very different endings.</li></ul>`)}
+  <button class="btn primary" onclick="go('hub')">Go to the Case Board →</button>
+</section>`;
+
+function hint(){
+  const d=S.done;
+  if(d.dna) return 'The lab results are in. You have what you need. Time to make an arrest.';
+  if(!d.bone && !d.trowel) return 'Two good places to start: the <b>Bone Lab</b> to find out who this was, or the <b>Crime Scene</b> to look for evidence.';
+  if(d.bone && !d.trowel) return 'We know who she was. Now search the <b>Crime Scene</b> for evidence.';
+  if(!d.bone && d.trowel) return 'The trowel is bagged. The <b>Blood Lab</b> is open, but we still need the <b>Bone Lab</b> to identify our victim.';
+  if(!d.serology) return 'Get that blood stain typed at the <b>Blood Lab</b>.';
+  if(!interviewsDone()) return 'Talk to everyone who knew Nell in the <b>Interview Room</b>, and ask each of them for a sample.';
+  if(!S.meganSample) return 'We still need Megan’s DNA. Head back to the <b>Interview Room</b> to decide how to get it.';
+  return 'Everything’s ready for the <b>DNA Lab</b>.';
+}
+SC.hub = () => {
+  const d=S.done, flash=S.flash; S.flash='';
+  const locs=[
+    {ic:'🦴',t:'Bone Lab',desc:'Who was this person?',go:d.bone?'boneDone':'boneSex',done:d.bone},
+    {ic:'🌿',t:'Crime Scene',desc:'Search the old greenhouse grounds',go:'sceneSearch',done:d.trowel,lab:d.trowel?`${Object.keys(S.searched).length}/4 spots searched`:''},
+    {ic:'🗣️',t:'Interview Room',desc:'Question the people who knew the victim',go:'interviews',done:interviewsDone()&&!!S.meganSample,lock:!d.bone&&'Identify the victim first (Bone Lab)'},
+    {ic:'🩸',t:'Blood Lab',desc:'Type the blood found on the evidence',go:d.serology?'seroDone':'serology',done:d.serology,lock:!d.trowel&&'Find blood evidence first (Crime Scene)'},
+    {ic:'🧬',t:'DNA Lab',desc:'Run a DNA fingerprint',go:d.dna?'dnaDone':'dna',done:d.dna,lock:!(d.serology&&interviewsDone()&&S.meganSample)&&'Needs blood typing and DNA samples from all four suspects'},
+    {ic:'⚖️',t:'Make an Arrest',desc:'Name the person responsible',go:'accuse',lock:!interviewsDone()&&'Interview all four suspects first'}
+  ];
+  return `${flash?`<div class="card">${flash}</div>`:''}
+  <div class="boardwrap"><h2 style="color:#fff;margin-top:0">Case Board</h2>
+  <div class="hint"><span>🕵️‍♀️</span><span>${hint()}</span></div>
+  <div class="board">${locs.map(l=>`<button class="loc" ${l.lock?'disabled':''} onclick="go('${l.go}')">
+    <span class="ic">${l.ic}</span><span class="t">${l.t}</span>
+    <span class="d">${l.lock?'🔒 '+l.lock:(l.lab||l.desc)}</span>${l.done?'<span class="badge">DONE ✓</span>':''}</button>`).join('')}</div></div>`;
+};
+
+/* ----- BONE LAB ----- */
+SC.boneSex = () => `<section class="card">
+  <div class="kicker">Bone Lab · Step 1 of 5</div><h2>Biological sex: read the pelvis</h2>
+  ${KIM(`<p>Welcome to the bone lab! Bones keep a surprising record of a person’s life. We’ll build a profile (sex, age and height) and compare it with missing-person reports.</p>
+  <p>Let’s start with the <b>pelvis</b>, the most reliable bone for estimating sex in adults.</p>`)}
+  ${note('What to look for',`Look at the <b>subpubic angle</b>, the arch under the front of the pelvis. Pelvises from females are usually wider, with a broad, U-shaped arch (often <b>90° or more</b>) that makes room for childbirth. Pelvises from males usually have a narrow, V-shaped arch (often <b>under 70°</b>).`)}
+  <div class="figrow">${pelvis(62,'Typical male: narrow, V-shaped')}${pelvis(112,'Typical female: wide, U-shaped')}${pelvis(105,'OUR SKELETON: measured ≈ 105°',true)}</div>
+  <p class="small">Simplified diagrams, front view. Dr. Ward also notes that the <b>greater sciatic notch</b> on the back of the hip bone is <b>wide and shallow</b>, which is another typical female trait.</p>
+  ${mc('qsex','Based on the pelvis, this person was most likely:',[
+    ['Female',true,'Right! A wide 105° arch and a wide sciatic notch both point to female.'],
+    ['Male',false,'Look again: males usually have a narrow arch under about 70°. Ours measures 105°.'],
+    ['Impossible to tell from bones',false,'Bones can tell us a lot! When an expert examines an adult pelvis, the estimate is right about 90–95% of the time.']
+  ], `<button class="btn primary" onclick="go('boneAge')">Next: estimate age →</button>`,
+  ()=>addClue('sex','🦴','Biological sex','Female: wide pelvis, 105° subpubic angle.'))}
+</section>`;
+
+SC.boneAge = () => `<section class="card">
+  <div class="kicker">Bone Lab · Step 2 of 5</div><h2>How old was she?</h2>
+  ${KIM(`<p>Children’s bones have <b>growth plates</b>, bands of cartilage where bones get longer. When we finish growing, they fuse into solid bone. Later in life, joints show wear and tear. Here’s what I found:</p>`)}
+  <div class="clues3">
+    <div class="cluecard"><b>① Growth plates</b>All fused, even the collarbone end near the breastbone. That’s one of the last to fuse, usually by the mid-to-late 20s.</div>
+    <div class="cluecard"><b>② Pubic symphysis</b>Where the two hip bones meet in front: a smooth surface with a neat rim and no pitting or crumbling. That fits roughly the late 20s to 30s.</div>
+    <div class="cluecard"><b>③ Spine</b>No bony spurs (arthritic “lipping”) on the vertebrae. Spurs become common after about age 50.</div>
+  </div>
+  ${mc('qage','About how old was this person?',[
+    ['13–19 (teenager)',false,'A teenager would still have some open growth plates, especially at the collarbone. All of hers are fused.'],
+    ['25–40 (young adult)',true,'Exactly. Fused growth plates say adult, and the lack of wear and tear says not elderly.'],
+    ['60+ (older adult)',false,'An older adult would usually show spurs on the spine and a worn, pitted pubic symphysis. We don’t see those.']
+  ], `<button class="btn primary" onclick="go('boneHeight')">Next: estimate height →</button>`,
+  ()=>addClue('age','🎂','Estimated age','About 25–40 years old.'))}
+</section>`;
+
+SC.boneHeight = () => `<section class="card">
+  <div class="kicker">Bone Lab · Step 3 of 5</div><h2>How tall was she?</h2>
+  ${KIM(`<p>Long leg bones are great for estimating height. The <b>femur</b> (thigh bone) is the longest bone in the body, about a quarter of a person’s height. Measure it from the top of the hip end to the bottom of the knee end.</p>`)}
+  <div class="scrollx">${femurSVG()}</div>
+  <p class="prompt">Step 1: Read the ruler. How long is the femur, in centimeters?</p>
+  <div class="inrow"><input id="femur" type="number" step="0.5" min="0" max="60" placeholder="e.g. 38.5" onkeydown="if(event.key==='Enter')measure()"> <span>cm</span>
+  <button class="btn dark" onclick="measure()">Measure</button></div>
+  <div class="fb" id="fem-fb" hidden></div>
+  <div id="fem-next" hidden>
+    <p class="prompt">Step 2: Plug it into a formula forensic scientists use for adult females:</p>
+    <div class="note" style="font-size:1.1rem;text-align:center"><b>Height (cm) = 2.47 × femur + 54.1</b><br>
+      2.47 × 44.5 + 54.1 = <b>164 cm</b>, about <b>5′4½″</b> (give or take about 4 cm)</div>
+    <p class="small">This is the Trotter &amp; Gleser formula (1952). There are different versions for males and females and for different populations, which is why we figured out sex first!</p>
+    <button class="btn primary" onclick="go('boneMatch')">Next: check missing-person reports →</button>
+  </div>
+</section>`;
+function measure(){
+  const v=parseFloat($('#femur').value);
+  if(isNaN(v)) return fb('fem-fb',false,'Type a number first. Find where the red dashed line at the knee end crosses the ruler.');
+  if(v>=44 && v<=45){ fb('fem-fb',true, v===44.5?'Perfect: 44.5 cm.':'Close enough! The precise reading is 44.5 cm, halfway between 44 and 45.');
+    $('#fem-next').hidden=false; addClue('height','📏','Estimated height','Femur 44.5 cm → about 164 cm (5′4½″).'); }
+  else { oops(); fb('fem-fb',false, v>=40&&v<=49 ? 'Close! Follow the red dashed line at the knee end down to the ruler. Which two whole numbers is it between?' :
+    'Not quite. Start at 0 (the hip end) and follow the red dashed line at the knee end down to the ruler. The big numbers count by 5s.'); }
+}
+
+SC.boneMatch = () => `<section class="card">
+  <div class="kicker">Bone Lab · Step 4 of 5</div><h2>Who could she be?</h2>
+  <p>Your skeleton profile:</p>
+  <div class="profile"><span class="pill">Female</span><span class="pill">Age ~25–40</span><span class="pill">Height ~164 cm (5′4½″)</span></div>
+  ${KIM('<p>Four people are listed as missing in the county. Which report fits our profile?</p>')}
+  ${mc('qmatch','Pick the missing-person report that matches:',[
+    ['<b>Ruth Abernathy</b><small>Female · 71 · 5′3″ (160 cm) · retired teacher</small>',false,'Her height is close, but at 71 we’d expect worn joints and spurs on the spine. This skeleton is younger.'],
+    ['<b>Daniel Brooks</b><small>Male · 34 · 5′11″ (180 cm) · delivery driver</small>',false,'His age fits, but the pelvis says female, and 5′11″ is much taller than our estimate.'],
+    ['<b>Eleanor “Nell” Hartwell</b><small>Female · 32 · 5′5″ (165 cm) · botanist at Hartwell Greenhouse · medical note: broke her right forearm at age 10</small>',true,'A match on every point. Her medical note gives us something else to check: a childhood broken arm.'],
+    ['<b>Jessica Hayes</b><small>Female · 29 · 5′10″ (178 cm) · nurse</small>',false,'Sex and age fit, but 178 cm is well outside our estimate of about 164 cm.']
+  ], `<button class="btn primary" onclick="go('boneInjury')">Next: examine the injuries →</button>`)}
+</section>`;
+
+const MARKS=[
+  {k:'arm',where:'A · Right forearm (radius)',desc:'A smooth, thickened lump of bone around an old break line. The edges are rounded.',ans:'ante',
+    why:{ante:'Right: the bone had time to heal and build a “callus” of new bone.',peri:'No healing happens with perimortem breaks. This one has rounded, remodeled edges, so it healed.',post:'A break after death couldn’t heal. This one shows new bone growth.'}},
+  {k:'skull',where:'B · Back of the skull',desc:'A round dent with cracks spreading out from it. Sharp edges with no sign of healing. Same color as the rest of the bone.',ans:'peri',
+    why:{peri:'Right: living bone bends and cracks like this, with no time to heal.',ante:'Healed injuries have smooth, rounded edges. These edges are sharp, so there was no healing.',post:'A break after death usually looks lighter in color with rough, chunky edges. This one matches the rest of the bone and shows the bending of living bone.'}},
+  {k:'leg',where:'C · Left thigh bone',desc:'A rough scrape with jagged edges. The scraped area is much lighter in color than the bone around it.',ans:'post',
+    why:{post:'Right: the fresh, lighter color means it happened recently, long after death.',ante:'There’s no healing here at all, just a fresh scrape.',peri:'The color difference is the giveaway. This surface was exposed recently, long after death.'}}
+];
+SC.boneInjury = () => `<section class="card">
+  <div class="kicker">Bone Lab · Step 5 of 5</div><h2>Marks on the bones</h2>
+  ${KIM('<p>Last step. Forensic anthropologists sort injuries by <b>when</b> they happened. Match each mark to its timing.</p>')}
+  <div class="defs">
+    <div class="def" style="border-color:var(--teal)"><b>Antemortem</b>Long <i>before</i> death. The bone had time to heal: smooth, rounded edges and extra bone.</div>
+    <div class="def" style="border-color:var(--red)"><b>Perimortem</b><i>Around</i> the time of death. Living bone bends and cracks, with no healing.</div>
+    <div class="def" style="border-color:var(--gold)"><b>Postmortem</b><i>After</i> death. Dry, brittle bone breaks roughly, often with a lighter, fresher color.</div>
+  </div>
+  <div class="marks">${MARKS.map(m=>`<div class="mark" id="mk-${m.k}"><b>${m.where}</b><p style="margin:.3em 0">${m.desc}</p>
+    <select id="sel-${m.k}" aria-label="Timing for ${m.where}"><option value="">Choose a timing…</option><option value="ante">Antemortem (healed, before death)</option><option value="peri">Perimortem (around the time of death)</option><option value="post">Postmortem (after death)</option></select>
+    <div class="small" id="why-${m.k}" style="margin-top:6px"></div></div>`).join('')}</div>
+  <button class="btn dark" onclick="checkMarks()">Check my answers</button>
+  <div class="fb" id="mk-fb" hidden></div>
+  <div id="mk-next" hidden>
+    ${KIM(`<p><b>Mark A</b> is Nell’s childhood broken arm, another match. <b>Mark C</b> came from a volunteer’s shovel during the dig.</p>
+    <p>But <b>Mark B</b>… a hard blow to the back of the head around the time she died. Dental records just came back too, and they confirm she is <b>Eleanor “Nell” Hartwell</b>.</p>`)}
+    ${RUIZ('<p>This wasn’t an accident, Detective. We’re working a <b>homicide</b> now.</p>')}
+    <button class="btn primary" onclick="finishBone()">Back to the Case Board →</button>
+  </div>
+</section>`;
+function checkMarks(){
+  let right=0, blank=false;
+  MARKS.forEach(m=>{ const v=$('#sel-'+m.k).value, box=$('#mk-'+m.k), why=$('#why-'+m.k);
+    if(!v){ blank=true; box.className='mark'; why.textContent=''; return; }
+    box.className='mark '+(v===m.ans?'okm':'nom'); why.textContent=(v===m.ans?'✅ ':'🤔 ')+m.why[v]; if(v===m.ans) right++; });
+  if(blank) return fb('mk-fb',false,'Choose a timing for every mark first.');
+  if(right===3){ fb('mk-fb',true,'All three correct! You read the bones like a pro.'); $('#mk-next').hidden=false; document.querySelectorAll('.marks select').forEach(s=>s.disabled=true); }
+  else { oops(); fb('mk-fb',false,`${right} of 3 correct. Read the hints, change your answers, and check again.`); }
+}
+function finishBone(){ S.done.bone=true;
+  addClue('victim','🪪','Victim identified','Eleanor “Nell” Hartwell, 32, botanist. Missing two springs ago. Confirmed by dental records and her healed broken arm.');
+  addClue('cause','⚠️','What happened','A blow to the back of the head around the time of death (perimortem). Homicide.');
+  go('hub'); }
+SC.boneDone = () => `<section class="card"><div class="kicker">Bone Lab</div><h2>Bone lab: complete ✓</h2>
+  <div class="profile"><span class="pill">Female</span><span class="pill">25–40</span><span class="pill">~164 cm</span><span class="pill">Healed right forearm</span><span class="pill">Perimortem skull injury</span></div>
+  <p>Identified as <b>Eleanor “Nell” Hartwell</b>. Cause: a blow to the head. Manner of death: homicide.</p>${backBtn()}</section>`;
+
+/* ----- CRIME SCENE ----- */
+const SPOTS={
+  bench:{ic:'🪴',t:'Old potting bench',s:'right beside the dig site'},
+  shed:{ic:'🛖',t:'Tool shed',s:'unlocked, door creaking'},
+  beds:{ic:'🌱',t:'Herb beds',s:'overgrown and weedy'},
+  compost:{ic:'🪣',t:'Compost bins',s:'lids half-buried'}
+};
+SC.sceneSearch = (spot) => {
+  let found='';
+  if(spot==='shed') found=`<div class="found"><b>🛖 Tool shed</b><p>Rows of garden tools hang on hooks, and <b>every one is engraved “G.P.”</b> One hook is empty.</p>
+    <p>On a dusty shelf you find Nell’s planner. The last entry, from the night she vanished, reads: <i>“7 pm: meet M. here about the books. Bring the ledger!”</i></p></div>`;
+  if(spot==='beds') found=`<div class="found"><b>🌱 Herb beds</b><p>A rabbit hops away… and there’s no evidence here. That’s real detective work: most searches turn up nothing, and you record that too.</p></div>`;
+  if(spot==='compost') found=`<div class="found"><b>🪣 Compost bins</b><p>Tucked under a lid is a torn page from the greenhouse sales ledger. Three rare orchids were sold for <b>$4,000 each</b>, every sale signed <b>“M.R.”</b></p>
+    <p>In the margin, in Nell’s handwriting: <i>“I never approved these!!”</i></p></div>`;
+  if(spot==='bench') found=`<div class="found"><b>🪴 Potting bench</b><p>This is where you found the bagged trowel. It’s already on its way to the lab.</p></div>`;
+  return `<section class="card"><div class="kicker">Crime Scene · Hartwell Greenhouse</div><h2>Search the grounds</h2>
+  ${RUIZ(`<p>${S.done.bone?'Nell’s family owned this greenhouse. It closed after she disappeared two springs ago.':'This greenhouse has been closed for about two years.'} The bones were found near the potting bench. Tap a spot to search it.</p>`)}
+  ${S.done.trowel?'<p class="small">✅ Blood evidence collected. You can keep searching or head back.</p>':''}
+  <div class="spots">${Object.entries(SPOTS).map(([k,v])=>`<button class="spot ${S.searched[k]?'done':''}" onclick="search('${k}')"><span class="ic">${v.ic}</span><b>${v.t}</b><br><span class="small">${S.searched[k]?'Searched ✓':v.s}</span></button>`).join('')}</div>
+  ${found}${backBtn()}</section>`;
+};
+function search(k){
+  S.searched[k]=true;
+  if(k==='bench' && !S.done.trowel) return go('sceneTrowel');
+  if(k==='shed') addClue('planner','📓','Nell’s planner (tool shed)','Last entry: “7 pm: meet M. here about the books.” Every shed tool is engraved “G.P.” One hook is empty.');
+  if(k==='compost') addClue('ledger','🧾','Torn ledger page (compost bin)','Rare orchids secretly sold for $4,000 each, signed “M.R.” Nell wrote: “I never approved these!!”');
+  S.scene='sceneSearch'; S.arg=k; draw();
+  document.querySelector('.found')?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+SC.sceneTrowel = () => {
+  const decide = `<div class="note"><b class="h">📸 Zoomed-in photo</b>Your close-up shows initials engraved on the handle: <b style="font-size:1.2em">G.P.</b></div>
+    ${RUIZ('<p>G.P.… <b>Gordon Pike</b>, the greenhouse groundskeeper. Nell fired him the week she vanished. What’s our move?</p>')}
+    <div class="opts">
+      <button class="opt" onclick="go('endTooSoon')"><b>Arrest Gordon Pike right now!</b><small>His initials are on the weapon. Case closed?</small></button>
+      <button class="opt" onclick="S.flash='${'🩸 The trowel is on its way to the <b>Blood Lab</b>. The Blood Lab is now unlocked on the Case Board.'}';go('sceneSearch')"><b>Send the blood to the lab first</b><small>Let the science speak before we act.</small></button>
+    </div>`;
+  return `<section class="card"><div class="kicker">Crime Scene · Potting bench</div><h2>Something hidden</h2>
+  <p>Under the potting bench, wrapped in an old plastic bag, you find a <b>garden trowel</b>. A dark brown stain covers the handle. It could be dried blood.</p>
+  ${S.done.trowel ? decide : mc('qtrowel','How do you handle it?',[
+    ['Wipe the handle clean so you can read the engraving',false,'Whoa, stop! Morgan grabs your wrist. Wiping would destroy the very evidence we need. Never clean evidence at a scene.'],
+    ['Pick it up with your bare hands for a closer look',false,'Careful! Your own skin cells and fingerprints could contaminate it. Gloves on, always.'],
+    ['Photograph it where it lies, then pick it up with gloves and seal it in a labeled evidence bag',true,'By the book! Photos record exactly where it was found, and the label starts the <b>chain of custody</b>: a record of everyone who handles the evidence, so it holds up in court.']
+  ], decide, ()=>{ S.done.trowel=true; addClue('trowel','🧤','Garden trowel (potting bench)','Hidden near the bones, wrapped in plastic. Dried blood on the handle. Engraved “G.P.”'); })}
+  </section>`;
+};
+SC.endTooSoon = () => { oops(); return `<section class="card ending">
+  <div class="stampbig alt">ALTERNATE ENDING</div><h2>The Rush to Judgment</h2>
+  <p>You arrest Gordon Pike that afternoon. Two days later, the case falls apart.</p>
+  <p>His lawyer shows the judge that Gordon engraves his initials on <b>every tool in the greenhouse</b>, and those tools hang in a shed that’s never locked. With no lab results linking Gordon to the blood, the judge releases him.</p>
+  <p>Meanwhile, the real killer now knows you’re getting close…</p>
+  ${note('Detective lesson','A name on a tool shows who <b>owns</b> it, not who <b>used</b> it. Evidence comes before arrests.')}
+  <button class="btn primary" onclick="go('sceneTrowel')">⏪ Rewind to the trowel decision</button></section>`; };
+
+/* ----- INTERVIEWS ----- */
+SC.interviews = () => {
+  const all=interviewsDone();
+  let meganPart='';
+  if(all && !S.meganSample){
+    meganPart = `<h3>Megan refused to give a sample</h3>
+    ${RUIZ('<p>We can’t force a DNA swab without a legal reason. How do we get Megan’s DNA the right way?</p>')}
+    <div class="opts">
+      <button class="opt" onclick="getSample('warrant')"><b>Ask a judge for a search warrant</b><small>The judge will want evidence linking Megan to the crime (probable cause).</small></button>
+      <button class="opt" onclick="getSample('cup')"><b>Collect the coffee cup she throws away in a public trash can</b><small>Discarded items can sometimes be tested.</small></button>
+    </div>${S.judgeDenied?`<div class="fb no">⚖️ Judge Harper shakes her head: “You need something that connects Ms. Reed to this crime.” <b>Hint:</b> have you searched every spot at the crime scene and asked Megan everything?</div>`:''}`;
+  } else if(S.meganSample){
+    meganPart = `<div class="fb ok">✅ All four DNA samples are in. The DNA Lab is ready${S.done.serology?'':' once the blood is typed'}.</div>`;
+  }
+  return `<section class="card"><div class="kicker">Interview Room</div><h2>Who knew Nell?</h2>
+  ${RUIZ('<p>Four names keep coming up. Talk to each one, and ask everyone for a DNA cheek swab and a blood sample so the lab can compare them with the trowel.</p>')}
+  <div class="suspects">${Object.entries(SUS).map(([k,s])=>{ const st=S.sus[k];
+    return `<button class="sus" onclick="go('interview','${k}')"><span class="ava" style="background:${s.col}">${s.ini}</span>
+      <span><span class="nm">${s.name}</span><span class="rl">${s.role}</span>
+      <span class="st">${st.asked?(k==='megan'?(S.meganSample?'🧪 Sample collected':'🚫 Refused sample'):'🧪 Blood type '+st.type):'Not interviewed yet'}</span></span></button>`; }).join('')}</div>
+  ${meganPart}${backBtn()}</section>`;
+};
+SC.interview = (who) => {
+  const s=SUS[who], st=S.sus[who], qs=questions(who);
+  let tr=''; qs.forEach((q,i)=>{ if(st.q[i]) tr+=`<div class="qq">You: ${q[0]}</div><div class="aa">${q[1]}</div>`; });
+  if(st.asked) tr+=`<div class="qq">You: Will you give a DNA cheek swab and a blood sample?</div><div class="aa">${who==='megan'
+     ? '“Absolutely not. If you want my DNA, talk to my lawyer.”'
+     : who==='gordon' ? '“Sure, take whatever you need. I’ve got nothing to hide.” <b>Lab result: blood type A+.</b>'
+     : who==='theo' ? '“Anything that helps find who did this to her.” <b>Lab result: blood type B+.</b>'
+     : '“Fine. Science will clear me.” <b>Lab result: blood type O−.</b>'}</div>`;
+  return `<section class="card"><div class="kicker">Interview Room</div>
+  <div style="display:flex;gap:16px;align-items:center"><span class="ava big" style="background:${s.col}">${s.ini}</span><div><h2 style="margin:0">${s.name}</h2><div class="small">${s.role}</div></div></div>
+  <p><i>${s.intro}</i></p>
+  ${tr?`<div class="transcript">${tr}</div>`:''}
+  <div class="qbtns">${qs.map((q,i)=>st.q[i]?'':`<button class="opt" onclick="askQ('${who}',${i})">💬 ${q[0]}</button>`).join('')}
+  ${st.asked?'':`<button class="opt" onclick="askSample('${who}')">🧪 Ask for a DNA cheek swab and a blood sample</button>`}</div>
+  <button class="btn ghost" onclick="go('interviews')">← Back to the Interview Room</button></section>`;
+};
+function getSample(how){
+  if(how==='warrant'){
+    if(has('ledger') && (has('scar')||has('planner'))){ S.meganSample='warrant';
+      addClue('meganDNA','🧪','Megan: DNA sample','Warrant granted after Judge Harper saw the ledger page, the planner entry and the scar. A cheek swab was collected.');
+      S.flash=`${note('Warrant granted','Judge Harper reviews the ledger page signed “M.R.”, Nell’s note about meeting “M.”, and Megan’s scar. “That’s probable cause.” A cheek swab is collected under the warrant.')}`;
+      return go('hub'); }
+    S.judgeDenied=true; return draw();
+  }
+  S.meganSample='cup';
+  addClue('meganDNA','🧪','Megan: DNA sample','Collected from a coffee cup she threw into a public trash can (“abandoned DNA”).');
+  S.flash = note('Abandoned DNA','Police can often collect items a person throws away in public, like a cup or a napkin, and test the DNA left on them. U.S. courts have generally allowed this, though people still debate the privacy questions it raises.');
+  go('hub');
+}
+
+/* ----- SEROLOGY ----- */
+const WELLS=[['a','Anti-A',false],['b','Anti-B',true],['d','Anti-Rh',true]];
+SC.serology = () => {
+  const allIn = WELLS.every(w=>S.wells[w[0]]);
+  return `<section class="card"><div class="kicker">Blood Lab</div><h2>Type the blood on the trowel</h2>
+  ${SAM(`<p>Good news: the stain is human blood. Let’s find its <b>type</b>.</p>
+  <p>Red blood cells carry markers called <b>antigens</b>: A, B and Rh. We add a drop of <b>antibodies</b> (called antiserum) to some of the sample. If the matching antigen is there, the cells <b>clump together</b>. If not, the blood stays smooth.</p>`)}
+  <div class="wells">${WELLS.map(([k,l,c])=>`<div class="wellbox">${well(k,c,S.wells[k])}<div class="lbl">${l}</div>
+    <div class="res">${S.wells[k]?(c?'<b style="color:#9b1c24">Clumped!</b>':'Smooth: no clumping'):''}</div>
+    <button class="btn dark" ${S.wells[k]?'disabled':''} onclick="addSerum('${k}')">💧 Add ${l}</button></div>`).join('')}</div>
+  ${allIn ? mc('qtype','What is the blood type of the trowel stain?',[
+    ['A+',false,'Look at the Anti-A drop. It stayed smooth, so there’s no A antigen.'],
+    ['B+',true,'Clumping with Anti-B means B antigens, and clumping with Anti-Rh means Rh-positive. <b>Type B+!</b>'],
+    ['AB+',false,'For AB, both the Anti-A and Anti-B drops would clump. Only one did.'],
+    ['O+',false,'Type O has neither A nor B antigens, so neither drop would clump. But Anti-B did!'],
+    ['B−',false,'Check the Anti-Rh drop. It clumped, so the blood is Rh-positive.']
+  ], mc('qnell','Nell’s medical records say she was type <b>O+</b>. Could the blood on the trowel be hers?',[
+    ['Yes, it’s probably Nell’s blood',false,'Type O blood has no B antigens, so it wouldn’t clump with Anti-B. This isn’t Nell’s blood.'],
+    ['No, it must be someone else’s',true,'Right. Someone else bled on this trowel, quite possibly the attacker, cut during the struggle. But about 1 in 11 people in the U.S. have B+ blood, so a blood type can <b>narrow the list</b>, not name a person. For that, we need DNA.']
+  ], `<button class="btn primary" onclick="finishSero()">Back to the Case Board →</button>`)) : '<p class="small">Add all three antisera to read the result.</p>'}
+  </section>`;
+};
+function addSerum(k){ S.wells[k]=true; draw(); }
+function finishSero(){ S.done.serology=true; addClue('blood','🩸','Trowel blood type','B+. Not Nell’s (she was O+), so likely the attacker’s.'); go('hub'); }
+SC.seroDone = () => `<section class="card"><div class="kicker">Blood Lab</div><h2>Blood lab: complete ✓</h2>
+  <div class="wells">${WELLS.map(([k,l,c])=>`<div class="wellbox">${well(k,c,true)}<div class="lbl">${l}</div><div class="res">${c?'Clumped':'Smooth'}</div></div>`).join('')}</div>
+  <p>Trowel blood: <b>B+</b>. Nell was O+, so this is someone else’s blood.</p>${backBtn()}</section>`;
+
+/* ----- DNA LAB ----- */
+SC.dna = () => `<section class="card"><div class="kicker">DNA Lab</div><h2>DNA fingerprinting</h2>
+  ${JORD(`<p><b>DNA</b> is the instruction code inside nearly every cell, and except for identical twins, everyone’s is unique.</p>
+  <p>To compare samples, we cut the DNA into pieces with special enzymes, load them into a slab of gel, and switch on an electric current. The pieces spread out by size, and each person ends up with their own pattern of bands: a <b>DNA fingerprint</b>.</p>`)}
+  ${mc('dq1','DNA carries a negative electric charge. When we switch on the current, which way will the DNA pieces move?',[
+    ['Toward the negative (−) end',false,'Like charges repel, so negative DNA is pushed away from the negative end.'],
+    ['Toward the positive (+) end',true,'Opposites attract! DNA’s backbone is negatively charged, so it moves toward the positive end.'],
+    ['They won’t move at all',false,'The electric current is what makes them move!']
+  ], mc('dq2','The gel is like a thick, tangled jungle. Which pieces will travel the farthest in the same amount of time?',[
+    ['The biggest pieces',false,'Big pieces get tangled in the gel and stay near the top.'],
+    ['The smallest pieces',true,'Yes! Small pieces slip through the gel easily and travel farthest.'],
+    ['They all travel the same distance',false,'If they did, everything would end up in one blob. Size is what spreads them out.']
+  ], elimHtml()))}
+</section>`;
+function elimHtml(){
+  const rows=Object.entries(SUS).map(([k,s])=>`<tr><td>${s.name}</td><td>${k==='megan'?'<i>Not tested (refused)</i>':'<b>'+s.type+'</b>'}</td></tr>`).join('');
+  return `<div class="q" id="elim"><p class="prompt">Before we run the gel, let’s narrow the list with blood types. The trowel blood is <b>B+</b>. Which suspects can you <u>rule out</u>?</p>
+  <table class="types"><tr><th>Suspect</th><th>Blood type</th></tr>${rows}</table>
+  <div class="checks">${Object.entries(SUS).map(([k,s])=>`<label><input type="checkbox" value="${k}"> Rule out ${s.name}</label>`).join('')}</div>
+  <button class="btn dark" onclick="checkElim()">Check</button><div class="fb" id="elim-fb" hidden></div>
+  <div id="gelpart" hidden><h3>Read the gel</h3>
+  <p>Here’s the finished gel. Lane <b style="color:#b8860b">E</b> (gold) is DNA from the trowel blood. <b>Tap the lane whose bands match lane E exactly.</b></p>
+  <div class="gelwrap" id="gel">${gelSVG(null)}</div><div class="fb" id="gel-fb" hidden></div><div id="gel-next" hidden></div></div></div>`;
+}
+let elimSolved=false, gelSolved=false;
+function checkElim(){
+  if(elimSolved) return;
+  const picked=[...document.querySelectorAll('.checks input:checked')].map(i=>i.value);
+  const msgs=[];
+  if(picked.includes('theo')) msgs.push('Theo is B+, the same as the trowel blood, so he <b>can’t</b> be ruled out.');
+  if(picked.includes('megan')) msgs.push('We don’t know Megan’s blood type, so we can’t rule her out yet.');
+  if(!picked.includes('gordon')) msgs.push('Gordon is type A+, which doesn’t match B+. He can be ruled out.');
+  if(!picked.includes('alan')) msgs.push('Alan is type O−, which doesn’t match B+. He can be ruled out.');
+  if(msgs.length){ oops(); return fb('elim-fb',false,msgs.join(' ')); }
+  elimSolved=true; document.querySelectorAll('.checks input').forEach(i=>i.disabled=true);
+  fb('elim-fb',true,'Gordon and Alan are ruled out by blood type. That leaves <b>Theo</b> and <b>Megan</b>, and blood type can’t tell them apart. Time for DNA. (We ran all four anyway, just to be thorough.)');
+  $('#gelpart').hidden=false;
+}
+const GELFB={
+  V:'That’s Nell’s own DNA, taken from a tooth. It doesn’t match lane E, which fits what the blood lab told us: the blood wasn’t hers.',
+  gordon:'None of Gordon’s bands line up with lane E. Not him.',
+  theo:'Close, but no. Theo shares <b>one</b> band with lane E, but not the others. One shared band isn’t enough, since many people share common pieces. A match has to line up on <b>every</b> band.',
+  alan:'Only the bottom band lines up. One band isn’t a match.',
+  megan:'Every single band lines up. <b>The blood on the trowel belongs to Megan Reed.</b> The chance that a random person would match this way is extremely small.'
+};
+function gelPick(k){
+  if(gelSolved) return;
+  $('#gel').innerHTML=gelSVG(k);
+  if(k==='megan'){ gelSolved=true; fb('gel-fb',true,GELFB[k]);
+    const n=$('#gel-next'); n.hidden=false;
+    n.innerHTML = mc('dq3','Bonus: look at lanes V (Nell) and S2 (Theo). Why do they share two bands?',[
+      ['Pure coincidence',false,'Sharing several bands is more than chance. Think about how these two are connected.'],
+      ['They’re siblings, so they inherited DNA from the same parents',true,'Exactly! You get half your DNA from each parent, so brothers and sisters share many bands. That’s also how DNA can identify a victim through family members.'],
+      ['The lab made a mistake',false,'The lab’s fine! Think about how Nell and Theo are related.']
+    ], `<p class="small">Real crime labs today compare about 20 DNA spots called STRs using machines, but the idea is exactly the same: patterns that match at every spot.</p>
+      <button class="btn primary" onclick="finishDNA()">Back to the Case Board →</button>`);
+  } else { oops(); fb('gel-fb',false,GELFB[k]); }
+}
+function finishDNA(){ S.done.dna=true; addClue('dna','🧬','DNA fingerprint','The trowel blood matches Megan Reed on every band. Theo shares some bands with Nell because they’re siblings.'); go('hub'); }
+SC.dnaDone = () => `<section class="card"><div class="kicker">DNA Lab</div><h2>DNA lab: complete ✓</h2>
+  <div class="gelwrap">${gelSVG('megan')}</div><p>The trowel blood (lane E) matches <b>Megan Reed</b> (lane S4) on every band.</p>${backBtn()}</section>`;
+
+/* ----- ACCUSATION + ENDINGS ----- */
+SC.accuse = () => `<section class="card"><div class="kicker">The Arrest</div><h2>Make the call</h2>
+  ${RUIZ(`<p>This is it, Detective ${S.name}. Who do we arrest for the murder of Nell Hartwell? Once we make an arrest, the evidence has to hold up in court.</p>`)}
+  <div class="suspects">${Object.entries(SUS).map(([k,s])=>`<button class="sus" onclick="accuse('${k}')"><span class="ava" style="background:${s.col}">${s.ini}</span>
+    <span><span class="nm">${s.name}</span><span class="rl">${s.role}</span></span></button>`).join('')}</div>
+  ${S.done.dna?'':'<p class="small">⚠️ You haven’t finished all the lab work yet. Are you sure you’re ready?</p>'}
+  ${backBtn('← Not yet, back to the Case Board')}</section>`;
+function accuse(k){
+  if(k==='megan') return go(S.done.dna?'endBest':'endHunch');
+  oops(); go('endWrong',k);
+}
+SC.endWrong = (k) => {
+  const why={
+    gordon: S.done.serology?'Gordon’s blood is type <b>A+</b>, and the trowel blood is <b>B+</b>. His initials on the tool proved only that he owned it.':'The lab later shows the blood on the trowel isn’t Gordon’s. His initials proved only that he owned the tool.',
+    theo: S.done.dna?'Theo shares some DNA with Nell because they’re siblings, but his pattern doesn’t match the trowel blood.':'Theo had a motive, the inheritance, but the DNA on the trowel turns out not to be his.',
+    alan: S.done.serology?'Alan’s blood is type <b>O−</b>, and the trowel blood is <b>B+</b>. A grudge isn’t evidence.':'Alan had a grudge, but the lab later shows the blood on the trowel isn’t his.'
+  }[k];
+  return `<section class="card ending"><div class="stampbig alt">ALTERNATE ENDING</div><h2>Wrong Suspect</h2>
+  <p>You arrest <b>${SUS[k].name}</b>. A few weeks later, the case collapses in court.</p><p>${why}</p>
+  <p>Somewhere in Briar Hollow, the real killer breathes a sigh of relief… for now.</p>
+  ${note('Detective lesson','Motive makes someone a suspect. Physical evidence is what proves a case.')}
+  <button class="btn primary" onclick="go('hub')">⏪ Back to the Case Board</button></section>`;
+};
+SC.endHunch = () => `<section class="card ending"><div class="stampbig alt">ALTERNATE ENDING</div><h2>A Hunch Isn’t Proof</h2>
+  <p>You arrest <b>Megan Reed</b>. You might be right… but her lawyer argues that a motive and an old scar aren’t proof of anything.</p>
+  <p>Without scientific evidence tying her to the scene, the judge dismisses the case.</p>
+  ${RUIZ('<p>Good instincts, Detective. Now go <b>prove</b> it.</p>')}
+  <button class="btn primary" onclick="go('hub')">⏪ Back to the Case Board</button></section>`;
+SC.endBest = () => {
+  const m=S.mistakes;
+  const rank = m<=2 ? ['🏅','Master Detective','Flawless forensic work. The crime lab wants to hire you.'] :
+               m<=5 ? ['🎖️','Senior Investigator','Solid work. A few wrong turns, but you followed the evidence home.'] :
+                      ['⭐','Rookie with Potential','You cracked it! Every great detective starts somewhere.'];
+  return `<section class="card ending"><div class="stampbig">CASE CLOSED</div><h2>Justice for Nell</h2>
+  <p>Faced with the DNA results, <b>Megan Reed</b> confesses.</p>
+  <p>For months she had been secretly selling the greenhouse’s rarest orchids and keeping the money. When Nell found the sales in the ledger, she asked Megan to meet her at the greenhouse. They argued, and in a moment of anger Megan struck Nell with a garden trowel, cutting her own palm on the blade. She buried Nell near the potting bench, hid the trowel nearby, and told everyone Nell had simply “run off.”</p>
+  <p>Two years later, the bones and the blood told the truth.</p>
+  ${say('Theo Hartwell','💐','<p>“All this time, people thought she just left us. Thank you for bringing my sister home.”</p>')}
+  <div class="cert"><div style="font-size:2.6rem">${rank[0]}</div><div class="small">Briar Hollow Police Department hereby recognizes</div>
+    <div class="type" style="font-size:1.5rem;margin:4px 0">Detective ${S.name}</div><div class="rank">${rank[1]}</div>
+    <p style="margin:.4em 0 0">${rank[2]}</p><p class="small">Wrong turns: ${m} · Clues found: ${S.clues.length} of 17</p>
+    <p class="small">Show this screen to your event host!</p></div>
+  <h3>How the evidence fit together</h3>
+  <ol class="chain">
+    <li><b>Bones</b> showed a female, 25–40, about 164 cm tall, with a healed broken arm. That matched Nell Hartwell.</li>
+    <li>A <b>perimortem</b> skull injury showed this was a homicide.</li>
+    <li>The <b>trowel</b>, collected without contamination, carried someone’s blood.</li>
+    <li><b>Blood typing</b> showed B+, which wasn’t Nell’s and ruled out Gordon and Alan.</li>
+    <li><b>DNA fingerprinting</b> matched the blood to Megan on every band.</li>
+    <li>The <b>ledger</b>, the planner and the <b>scar</b> explained why it happened.</li>
+  </ol>
+  <button class="btn primary" onclick="restart()">🔁 Play again</button> <a class="btn ghost" style="text-decoration:none" href="index.html">← Back to all stations</a></section>`;
+};
+function restart(){ S=fresh(); elimSolved=false; gelSolved=false; go('title'); }
+
+/* reset per-visit DNA flags when entering the lab */
+const _dna = SC.dna; SC.dna = () => { elimSolved=false; gelSolved=false; return _dna(); };
+
+go('title');
+</script>
+</body>
+</html>

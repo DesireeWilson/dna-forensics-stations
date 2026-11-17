@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DNA &amp; Forensics Science Stations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Special+Elite&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1830;--ink:#1d1a2b;--muted:#625d75;--card:#fff;--gold:#ffc83d;--teal:#2bb8a3;--pink:#ff5fa2;--red:#d4473b;--line:#e4e0ee}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Source Sans 3',system-ui,sans-serif;font-size:18px;line-height:1.5;color:var(--ink);min-height:100vh;
+  background:radial-gradient(circle at 15% 0%,#25407a 0%,transparent 45%),radial-gradient(circle at 90% 10%,#5a2a7a 0%,transparent 40%),var(--bg) fixed}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 16px 60px}
+header.hero{color:#fff;text-align:center;padding:16px 0 26px}
+.helix{font-size:2.6rem}
+h1{font-family:'Bungee',Impact,sans-serif;font-weight:400;font-size:clamp(1.9rem,6vw,3.2rem);line-height:1.08;margin:.2em 0}
+h1 span{color:var(--gold)}
+.sub{color:#cfd7ee;font-size:1.15rem;max-width:640px;margin:0 auto}
+.path{display:grid;gap:16px;counter-reset:s}
+.st{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;background:var(--card);border-radius:18px;padding:18px 20px;text-decoration:none;color:var(--ink);
+  box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .15s,box-shadow .15s;border-left:8px solid var(--c)}
+.st:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.num{width:64px;height:64px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-family:'Bungee';font-size:1.7rem}
+.st h2{margin:0;font-size:1.25rem}
+.st p{margin:.2em 0 0;color:var(--muted);font-size:.98rem}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c);margin-bottom:2px}
+.go{font-size:1.6rem;color:var(--c)}
+.tip{color:#cfd7ee;text-align:center;font-size:.95rem;margin-top:22px}
+/* station view */
+.station{background:var(--card);border-radius:22px;padding:26px clamp(18px,4vw,36px);box-shadow:0 14px 40px rgba(0,0,0,.45);text-align:center;border-top:10px solid var(--c)}
+.station .num{margin:0 auto 6px}
+.station h2{font-family:'Bungee';font-weight:400;font-size:clamp(1.5rem,5vw,2.3rem);margin:.2em 0;line-height:1.1}
+.station .lede{font-size:1.15rem;color:var(--muted);max-width:620px;margin:.3em auto 1em}
+.qr{width:min(78vw,340px);margin:10px auto;padding:14px;background:#fff;border:4px solid var(--c);border-radius:18px}
+.qr svg{display:block;width:100%;height:auto}
+.scan{font-family:'Bungee';color:var(--c);font-size:1.1rem;margin:4px 0}
+.btn{display:inline-block;border:none;border-radius:999px;padding:14px 26px;font-weight:700;font-size:1.1rem;text-decoration:none;margin:8px 6px}
+.btn.main{background:var(--c);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.btn.soft{background:#f0edf7;color:var(--ink)}
+.navrow{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:18px}
+.navrow a{color:#fff;text-decoration:none;font-weight:700;background:rgba(255,255,255,.12);padding:10px 16px;border-radius:999px}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:14px 0;text-align:left}
+.feat div{background:#f6f4fb;border-radius:12px;padding:10px 12px;font-size:.95rem}
+.feat b{display:block}
+.small{color:var(--muted);font-size:.9rem}
+@media (max-width:560px){.st{grid-template-columns:56px 1fr}.st .go{display:none}.num{width:52px;height:52px;font-size:1.4rem}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const QR={v1:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" class="segno"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#1b1530" d="M2 2.5h7m1 0h3m3 0h1m1 0h1m1 0h1m2 0h2m3 0h7m-33 1h1m5 0h1m1 0h3m1 0h3m1 0h2m2 0h1m1 0h1m3 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h2m1 0h5m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h1m2 0h1m1 0h1m5 0h1m2 0h1m2 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m5 0h3m1 0h3m3 0h1m3 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m2 0h1m2 0h1m4 0h1m3 0h2m1 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-24 1h3m1 0h1m1 0h2m5 0h1m1 0h1m-24 1h1m4 0h5m2 0h3m1 0h1m4 0h2m1 0h1m5 0h2m-32 1h4m4 0h2m2 0h1m1 0h2m1 0h2m1 0h1m1 0h1m4 0h3m-31 1h4m2 0h2m1 0h1m2 0h1m5 0h1m3 0h1m1 0h2m2 0h1m1 0h2m-31 1h1m1 0h1m3 0h2m1 0h6m3 0h2m1 0h2m2 0h7m-32 1h1m2 0h5m3 0h1m3 0h3m1 0h2m2 0h3m5 0h1m-33 1h2m1 0h3m2 0h1m3 0h1m1 0h2m7 0h1m1 0h3m2 0h3m-33 1h1m1 0h1m1 0h4m1 0h2m2 0h1m2 0h1m3 0h3m2 0h2m1 0h4m-30 1h2m4 0h3m1 0h1m1 0h1m3 0h3m4 0h1m1 0h1m1 0h2m1 0h1m-33 1h4m1 0h2m1 0h1m3 0h2m3 0h1m4 0h1m1 0h2m1 0h3m2 0h1m-32 1h1m3 0h1m1 0h1m4 0h2m1 0h5m1 0h6m2 0h4m-33 1h2m1 0h1m2 0h1m1 0h2m1 0h5m2 0h2m2 0h2m3 0h1m1 0h2m1 0h1m-32 1h3m1 0h1m2 0h1m4 0h1m1 0h1m1 0h2m1 0h1m2 0h1m1 0h1m2 0h5m-32 1h2m2 0h2m2 0h3m1 0h1m2 0h3m3 0h1m2 0h1m2 0h2m1 0h2m-33 1h1m2 0h2m4 0h5m1 0h1m3 0h1m5 0h1m2 0h3m-31 1h1m2 0h1m1 0h3m2 0h2m1 0h1m1 0h1m1 0h2m2 0h2m1 0h2m1 0h1m2 0h2m-32 1h1m8 0h1m1 0h2m3 0h2m7 0h2m1 0h5m-33 1h5m1 0h3m1 0h1m1 0h4m1 0h2m1 0h1m3 0h6m1 0h1m-24 1h1m3 0h4m1 0h1m1 0h2m1 0h3m3 0h1m1 0h1m1 0h1m-33 1h7m1 0h3m2 0h1m1 0h4m3 0h3m1 0h1m1 0h1m1 0h1m-31 1h1m5 0h1m5 0h1m5 0h3m1 0h3m3 0h5m-33 1h1m1 0h3m1 0h1m2 0h1m4 0h5m2 0h2m1 0h6m1 0h2m-33 1h1m1 0h3m1 0h1m2 0h2m9 0h1m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m-33 1h1m1 0h3m1 0h1m2 0h4m2 0h1m1 0h1m1 0h3m2 0h1m2 0h2m2 0h2m-33 1h1m5 0h1m1 0h3m1 0h3m3 0h3m1 0h1m1 0h2m1 0h4m-31 1h7m2 0h1m1 0h1m1 0h3m2 0h1m3 0h4m1 0h1m3 0h1"/></svg>
+`,v2:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" class="segno"><path fill="#fff" d="M0 0h37v37h-37z"/><path class="qrline" stroke="#1b1530" d="M2 2.5h7m2 0h2m2 0h2m1 0h1m1 0h1m2 0h2m3 0h7m-33 1h1m5 0h1m3 0h1m5 0h3m1 0h3m1 0h1m1 0h1m5 0h1m-33 1h1m1 0h3m1 0h1m3 0h3m2 0h1m2 0h1m1 0h5m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m1 0h2m2 0h3m1 0h1m1 0h1m3 0h3m1 0h1m1 0h3m1 0h1m-33 1h1m1 0h3m1 0h1m3 0h2m3 0h1m2 0h3m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-33 1h1m5 0h1m1 0h2m1 0h1m3 0h4m2 0h2m1 0h1m1 0h1m5 0h1m-33 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-25 1h3m2 0h1m2 0h1m1 0h1m3 0h1m-22 1h2m3 0h1m2 0h1m5 0h2m2 0h2m2 0h1m2 0h2m1 0h1m-29 1h1m1 0h1m4 0h2m2 0h4m3 0h6m1 0h1m2 0h1m2 0h1m-33 1h2m1 0h1m1 0h2m1 0h1m1 0h5m1 0h5m2 0h2m1 0h1m2 0h2m1 0h1m-33 1h1m2 0h2m2 0h2m1 0h2m2 0h2m2 0h3m2 0h2m1 0h4m1 0h2m-29 1h4m5 0h1m2 0h3m1 0h1m3 0h3m5 0h1m-31 1h4m1 0h1m2 0h1m1 0h1m1 0h3m1 0h1m3 0h1m1 0h4m3 0h2m-33 1h2m1 0h1m2 0h1m1 0h2m4 0h4m1 0h3m1 0h1m6 0h1m1 0h1m-33 1h1m2 0h2m2 0h1m1 0h1m1 0h2m3 0h1m3 0h1m1 0h8m-30 1h1m2 0h2m1 0h2m2 0h3m1 0h1m1 0h1m2 0h2m2 0h2m1 0h2m3 0h1m-31 1h1m2 0h2m1 0h1m1 0h1m5 0h2m2 0h1m2 0h2m1 0h2m2 0h1m1 0h2m-33 1h2m1 0h1m1 0h2m1 0h2m1 0h2m1 0h2m2 0h2m3 0h1m3 0h1m1 0h2m1 0h1m-33 1h4m1 0h1m2 0h1m3 0h1m1 0h2m2 0h1m1 0h1m1 0h4m2 0h2m1 0h2m-32 1h1m2 0h1m1 0h2m2 0h1m2 0h1m3 0h3m2 0h2m2 0h1m-26 1h2m4 0h1m1 0h2m1 0h2m1 0h2m1 0h2m2 0h2m1 0h1m3 0h1m2 0h1m-33 1h2m1 0h2m1 0h1m1 0h1m2 0h2m1 0h2m2 0h2m1 0h1m1 0h2m1 0h5m1 0h1m-31 1h2m3 0h1m1 0h1m1 0h2m3 0h3m4 0h1m1 0h2m1 0h2m1 0h2m-33 1h5m1 0h3m1 0h6m1 0h2m1 0h1m3 0h6m1 0h1m-24 1h1m5 0h2m1 0h4m1 0h3m3 0h1m3 0h1m-33 1h7m2 0h1m1 0h1m1 0h1m1 0h1m1 0h6m1 0h1m1 0h1m1 0h5m-33 1h1m5 0h1m2 0h2m2 0h2m1 0h4m3 0h2m3 0h2m1 0h1m-32 1h1m1 0h3m1 0h1m3 0h4m1 0h2m2 0h1m1 0h1m1 0h6m-29 1h1m1 0h3m1 0h1m2 0h1m4 0h3m2 0h2m2 0h3m1 0h2m3 0h1m-33 1h1m1 0h3m1 0h1m1 0h3m1 0h1m3 0h2m1 0h1m1 0h1m2 0h1m2 0h2m2 0h2m-33 1h1m5 0h1m1 0h7m5 0h1m1 0h1m4 0h3m-30 1h7m2 0h3m3 0h4m1 0h1m3 0h6m2 0h1"/></svg>
+`};
+const ST=[
+ {n:1,c:'#2b8fd6',tag:'Watch',title:'Station 1 Video',blurb:'Scan the code to watch a short video on your phone.',kind:'video',url:'https://www.youtube.com/watch?v=uLUhT_JvFHc',qr:'v1'},
+ {n:2,c:'#c43f8f',tag:'Play · about 5–8 min',title:'The Dee N. Ay Show',blurb:'A talk-show paternity test. Read the DNA gel before the big reveal: are you the father?',kind:'game',href:'paternity.html',
+   feats:[['🧬','Read a DNA gel','Match a child’s bands to Mom and Dad'],['🩸','Blood-type genetics','Use A, B and O genes to rule people out'],['🐶','Puppy paternity','Yes, dogs get DNA tests too']]},
+ {n:3,c:'#24a38f',tag:'Watch',title:'Station 3 Video',blurb:'Scan the code to watch the next video.',kind:'video',url:'https://www.youtube.com/watch?v=PJ7A6Nw0My4',qr:'v2'},
+ {n:4,c:'#d98a12',tag:'Hands-on · about 10 min',title:'Bone Detective Lab',blurb:'Warm up on screen, then examine the real pelvis, skull, clavicle, femurs and humeri on the table to build a skeleton profile.',kind:'game',href:'bones.html',
+   feats:[['🦴','Bone ID','Name the bones and tell left from right'],['🖐️','Real bones','Check sex and age traits by hand'],['📏','Measure','Estimate height from the femur and humerus']]},
+ {n:5,c:'#d4473b',tag:'Finale · about 10–15 min',title:'The Bones of Briar Hollow',blurb:'A forensic murder mystery. Read the bones, type the blood and match the DNA to catch the culprit.',kind:'game',href:'mystery.html',
+   feats:[['🦴','Bone lab','Estimate sex, age and height from a skeleton'],['🩸','Blood typing','Read the clumping test'],['🧬','DNA fingerprint','Find the matching lane on the gel']]}
+];
+const app=document.getElementById('app');
+function home(){
+  app.innerHTML=`<header class="hero"><div class="helix">🧬🔎🦴</div><h1>DNA &amp; <span>Forensics</span><br>Science Stations</h1>
+    <p class="sub">Five stops. Watch, play, and solve your way through the science of DNA, blood and bones.</p></header>
+    <div class="path">${ST.map(s=>`<a class="st" style="--c:${s.c}" href="#station-${s.n}"><span class="num">${s.n}</span>
+      <span><span class="tag">${s.tag}</span><h2>${s.title}</h2><p>${s.blurb}</p></span><span class="go">→</span></a>`).join('')}</div>
+    <p class="tip">Running a table? Open a station and leave it on a tablet or laptop so visitors can scan or tap to play.</p>`;
+}
+function station(n){
+  const s=ST[n-1], prev=ST[n-2], next=ST[n];
+  const body = s.kind==='video'
+    ? `<p class="lede">${s.blurb}</p><div class="qr" role="img" aria-label="QR code linking to the station ${s.n} video">${QR[s.qr]}</div>
+       <div class="scan">📱 Scan with your phone camera</div>
+       <a class="btn main" href="${s.url}">▶ Or open the video here</a>
+       <p class="small">Opens on YouTube. When you’re done, head to Station ${s.n+1}.</p>`
+    : `<p class="lede">${s.blurb}</p><div class="feat">${s.feats.map(f=>`<div><b>${f[0]} ${f[1]}</b>${f[2]}</div>`).join('')}</div>
+       <a class="btn main" href="${s.href}">▶ Play now</a>`;
+  app.innerHTML=`<div class="station" style="--c:${s.c}"><span class="num">${s.n}</span><div class="small" style="text-transform:uppercase;letter-spacing:.08em;font-weight:700">Station ${s.n} of ${ST.length} · ${s.tag}</div>
+    <h2>${s.title}</h2>${body}</div>
+    <div class="navrow"><a href="#">⌂ All stations</a>${prev?`<a href="#station-${prev.n}">← Station ${prev.n}</a>`:''}${next?`<a href="#station-${next.n}">Station ${next.n} →</a>`:''}</div>`;
+}
+function route(){ const m=location.hash.match(/^#station-(\d)$/); if(m && ST[m[1]-1]) station(+m[1]); else home(); window.scrollTo({top:0}); }
+addEventListener('hashchange',route); route();
+</script>
+</body>
+</html>

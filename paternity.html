@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Dee N. Ay Show — Paternity Test Showdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--stage:#1b0f33;--stage2:#2c1656;--gold:#ffc83d;--pink:#ff5fa2;--blue:#4fc3ff;--card:#fff;--ink:#22192f;--muted:#6b6280;--green:#22a36a;--red:#e0483e;--line:#e3dcef}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Source Sans 3',system-ui,sans-serif;font-size:18px;line-height:1.5;color:var(--ink);min-height:100vh;
+  background:radial-gradient(ellipse at 50% -10%,#6a2fb8 0%,var(--stage2) 35%,var(--stage) 75%) fixed}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:
+  conic-gradient(from 200deg at 15% -5%,transparent 0 20deg,rgba(255,220,120,.10) 25deg,transparent 32deg),
+  conic-gradient(from 150deg at 85% -5%,transparent 0 20deg,rgba(255,120,200,.10) 25deg,transparent 32deg)}
+h1,h2,.show{font-family:'Bungee',Impact,sans-serif;font-weight:400;letter-spacing:.02em}
+h1{font-size:clamp(2rem,7vw,3.4rem);line-height:1.05;margin:.2em 0;color:var(--gold);text-shadow:0 3px 0 #b3471b,0 0 24px rgba(255,200,61,.5)}
+h2{font-size:1.5rem;margin:.2em 0 .5em}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.top{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:rgba(15,8,30,.9);backdrop-filter:blur(6px);color:#e8dcff;font-size:15px}
+.top a{color:#e8dcff;text-decoration:none}
+.top .score{font-family:'Bungee';color:var(--gold)}
+.wrap{max-width:900px;margin:0 auto;padding:22px 14px 60px;position:relative}
+.card{background:var(--card);border-radius:18px;padding:24px clamp(16px,4vw,30px);box-shadow:0 14px 40px rgba(0,0,0,.45);margin-bottom:18px}
+.center{text-align:center}
+.lede{color:#e8dcff;font-size:1.15rem}
+.host{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(135deg,#fff6db,#ffe9f3);border-radius:14px;padding:12px 14px;margin:12px 0}
+.host .av{flex:0 0 48px;height:48px;border-radius:50%;background:var(--stage2);display:grid;place-items:center;font-size:1.6rem}
+.host .who{font-family:'Bungee';font-size:.8rem;color:#8a3fd1}
+.host p{margin:.2em 0 .3em}
+.guests{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:14px 0}
+.guest{background:#f6f2fd;border:2px solid var(--line);border-radius:14px;padding:10px 12px;text-align:center;min-width:120px;flex:1 1 120px;max-width:200px}
+.guest .e{font-size:2.4rem;display:block;line-height:1.1}
+.guest b{display:block}
+.guest small{display:block;color:var(--muted);font-size:.85rem;line-height:1.3}
+.guest.mom{border-color:var(--pink)} .guest.kid{border-color:var(--gold)}
+.btn{border:none;border-radius:999px;padding:13px 24px;font-weight:700;margin:6px 6px 6px 0;font-size:1.05rem}
+.btn.go{background:var(--gold);color:#3a1d00;box-shadow:0 4px 0 #b3711b}
+.btn.go:hover{filter:brightness(1.05)}
+.btn.alt{background:#efe9fb;color:var(--ink)}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0}
+.rule{background:#f6f2fd;border-radius:12px;padding:12px 14px;font-size:.97rem}
+.rule b{font-family:'Bungee';color:#8a3fd1;font-size:.9rem;display:block}
+.step{font-family:'Bungee';font-size:.85rem;color:var(--pink);letter-spacing:.05em}
+.prompt{font-weight:700;font-size:1.08rem}
+.fb{margin-top:10px;padding:10px 14px;border-radius:12px;font-size:.98rem;animation:pop .3s}
+.fb.ok{background:#e2f6ec;border:1px solid #9edbbd}.fb.no{background:#fff0e0;border:1px solid #f5c48a}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.gelwrap{background:#0e1424;border-radius:14px;padding:10px;overflow-x:auto;margin:12px 0}
+.gelwrap svg{display:block;width:100%;height:auto}
+.band{cursor:pointer}
+.lane{cursor:pointer}.lane:hover .lbg{fill:rgba(255,255,255,.07)}
+.lane.off{cursor:not-allowed;opacity:.35}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.9rem;color:var(--muted);margin:4px 0}
+.legend span::before{content:"";display:inline-block;width:18px;height:6px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:.97rem}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}th{background:#f6f2fd}
+.checks{display:grid;gap:8px;margin:10px 0}
+.checks label{border:2px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.checks input{width:20px;height:20px}
+.envelope{font-size:4rem;display:inline-block;animation:wobble 1.2s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) scale(1.06)}}
+.verdict{font-family:'Bungee';font-size:clamp(1.6rem,5.5vw,2.6rem);line-height:1.15;margin:10px 0;animation:zoom .5s cubic-bezier(.2,1.6,.4,1)}
+.verdict.yes{color:var(--green)}.verdict.no{color:var(--red)}
+@keyframes zoom{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.nots{display:grid;gap:6px;margin:8px 0}
+.nots div{font-family:'Bungee';font-size:1rem;color:var(--red)}
+.crowd{font-size:1.6rem;letter-spacing:.2em;margin:6px 0}
+.meter{height:16px;border-radius:999px;background:#efe9fb;overflow:hidden;margin:6px 0 2px}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--gold));transition:width .6s}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.note{background:#f0f8ff;border-left:5px solid var(--blue);border-radius:10px;padding:10px 14px;margin:12px 0;font-size:.97rem}
+.small{font-size:.9rem;color:var(--muted)}
+.prog{display:flex;gap:6px;justify-content:center;margin:6px 0 0}
+.prog i{width:34px;height:6px;border-radius:3px;background:rgba(255,255,255,.25)}.prog i.on{background:var(--gold)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="top"><a href="index.html">← All stations</a><span class="show" style="font-size:14px">🎤 The Dee N. Ay Show</span><span class="score" id="score">★ 0</span></div>
+<div class="wrap" id="app" aria-live="polite"></div>
+<div class="confetti" id="confetti"></div>
+<script>
+/* ---------- episodes ---------- */
+const EP=[
+ {title:'Who’s the Daddy of Baby Leo?',
+  intro:'Sarah says the father is Ryan. Ryan agrees. But Matt says… it might be Matt? Only DNA can settle this.',
+  mom:{n:'Sarah',e:'👩',d:'Mom'}, kid:{n:'Baby Leo',e:'👶',d:'6 months old'},
+  men:[{k:'ryan',n:'Ryan',e:'🧔',d:'“I KNOW that baby is mine. Look at those ears!”'},
+       {k:'matt',n:'Matt',e:'👨',d:'“Don’t look at me! …Okay, maybe look at me a little.”'}],
+  father:'ryan',
+  bands:{mom:[950,780,610,450,300,170],kid:[950,700,610,380,300,220],ryan:[880,700,520,380,260,220],matt:[700,640,500,420,340,150]}},
+ {title:'Puppy Paternity: Who Fathered Biscuit?',
+  intro:'Three neighborhood dogs were spotted near Daisy’s yard last spring. Her owner, Mrs. Miller, wants answers! (Yes, dogs get DNA tests too. Breeders use them all the time.)',
+  mom:{n:'Daisy',e:'🐕',d:'Mom'}, kid:{n:'Biscuit',e:'🐶',d:'the puppy'},
+  men:[{k:'rocco',n:'Rocco',e:'🐕‍🦺',d:'“Woof.” (Translation: “Not my puppy.”)'},
+       {k:'duke',n:'Duke',e:'🦮',d:'“Woof woof!” (Translation: “I was just visiting!”)'},
+       {k:'bruno',n:'Bruno',e:'🐩',d:'“Arf.” (Translation: “I’m a poodle. Look at that puppy!”)'}],
+  father:'duke',
+  bands:{mom:[900,720,560,410,280,140],kid:[900,820,560,470,280,190],rocco:[990,820,600,350,190,120],duke:[820,650,470,330,190,160],bruno:[760,470,400,250,200,130]}},
+ {title:'Four Guys, One Question (Two Are Brothers!)',
+  intro:'Lena needs to know who Mia’s father is. Four men are on stage, and two of them are brothers, which makes this one extra tricky. This case needs blood typing AND DNA.',
+  blood:true,
+  mom:{n:'Lena',e:'👩',d:'Mom · blood type O',t:'O'}, kid:{n:'Mia',e:'👧',d:'age 3 · blood type B',t:'B'},
+  men:[{k:'kevin',n:'Kevin',e:'👨',d:'Blood type A',t:'A'},
+       {k:'keith',n:'Keith',e:'👨‍🦰',d:'Blood type B · Kyle’s brother',t:'B'},
+       {k:'kyle',n:'Kyle',e:'🧑‍🦰',d:'Blood type B · Keith’s brother',t:'B'},
+       {k:'karl',n:'Karl',e:'👴',d:'Blood type O',t:'O'}],
+  father:'keith', exclude:['kevin','karl'],
+  bands:{mom:[1000,800,640,500,330,180],kid:[1000,860,640,450,330,240],kevin:[930,760,590,450,290,160],keith:[860,700,450,310,240,150],kyle:[860,700,520,310,260,150],karl:[1000,620,540,380,240,120]}}
+];
+
+/* ---------- state ---------- */
+let G; const fresh=()=>({ep:0,phase:'title',score:0,found:[],out:[],tries:0,lane:null});
+G=fresh();
+const app=document.getElementById('app');
+const HOST=h=>`<div class="host"><div class="av">🎤</div><div><div class="who">Dr. Dee N. Ay · host</div>${h}</div></div>`;
+function pts(n){ G.score=Math.max(0,G.score+n); document.getElementById('score').textContent='★ '+G.score; }
+function set(phase){ G.phase=phase; render(); window.scrollTo({top:0}); }
+function fb(id,ok,msg){ const el=document.getElementById(id); el.className='fb '+(ok?'ok':'no'); el.innerHTML=(ok?'✅ ':'🤔 ')+msg; el.hidden=false; }
+const E=()=>EP[G.ep];
+const paternal=()=>E().bands.kid.filter(b=>!E().bands.mom.includes(b));
+const maternal=()=>E().bands.kid.filter(b=>E().bands.mom.includes(b));
+const progress=()=>`<div class="prog">${EP.map((_,i)=>`<i class="${i<=G.ep?'on':''}"></i>`).join('')}</div>`;
+
+/* ---------- gel ---------- */
+function gel(){
+  const e=E(), lanes=[['mom',e.mom.n,'Mom'],['kid',e.kid.n,'Child'],...e.men.map(m=>[m.k,m.n,'Possible dad'])];
+  const W=Math.max(420,70+lanes.length*76), y=bp=>58+(Math.log10(1150)-Math.log10(bp))/(Math.log10(1150)-Math.log10(100))*300;
+  const pat=paternal(), showPat = G.phase==='dad'||G.phase==='reveal';
+  let guides='', g='';
+  if(G.phase!=='mom' || G.found.length) e.bands.kid.forEach(bp=>{ const isM=G.found.includes(bp), isP=showPat&&pat.includes(bp);
+    if(isM||isP) guides+=`<line x1="40" x2="${W-10}" y1="${y(bp)}" y2="${y(bp)}" stroke="${isM?'#ff5fa2':'#4fc3ff'}" stroke-opacity=".35" stroke-dasharray="4 5"/>`; });
+  lanes.forEach(([k,name,role],i)=>{ const x=50+i*76, isMan=i>1, off=isMan&&G.out.includes(k);
+    const bands=e.bands[k].map(bp=>{
+      let fill='#c9d3e8';
+      if(k==='mom' && G.found.includes(bp)) fill='#ff5fa2';
+      if(k==='kid'){ fill='#ffd36b'; if(G.found.includes(bp)) fill='#ff5fa2'; else if(showPat&&pat.includes(bp)) fill='#4fc3ff'; }
+      if(isMan && showPat && pat.includes(bp)) fill='#4fc3ff';
+      const click = k==='kid' && G.phase==='mom';
+      return `<rect ${click?`class="band" onclick="tapBand(${bp})"`:''} x="${x+6}" y="${y(bp)-(click?6:3.5)}" width="54" height="${click?12:7}" rx="3" fill="${fill}" ${click?'':'filter="url(#gl)"'}/>`+
+        (click?`<rect x="${x+6}" y="${y(bp)-3.5}" width="54" height="7" rx="3" fill="${fill}" filter="url(#gl)" pointer-events="none"/>`:'');
+    }).join('');
+    const clickable = isMan && G.phase==='dad' && !off;
+    g+=`<g ${isMan&&G.phase==='dad'?`class="lane ${off?'off':''}" ${clickable?`onclick="pickDad('${k}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')pickDad('${k}')" aria-label="${name}"`:''}`:''}>
+      <rect class="lbg" x="${x}" y="40" width="66" height="340" rx="8" fill="${G.lane===k?'rgba(255,200,61,.18)':'transparent'}" ${G.lane===k?'stroke="#ffc83d" stroke-width="2"':''}/>
+      <rect x="${x+10}" y="46" width="46" height="8" rx="2" fill="#05080f" stroke="#4a5875"/>${bands}
+      <text x="${x+33}" y="20" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">${name}${off?' ✕':''}</text>
+      <text x="${x+33}" y="34" text-anchor="middle" fill="${i===0?'#ff9cc7':i===1?'#ffd36b':'#9fb0cc'}" font-size="10.5">${role}</text></g>`; });
+  return `<div class="gelwrap"><svg viewBox="0 0 ${W} 392" style="min-width:${Math.min(W,560)}px" role="img" aria-label="DNA gel comparing mom, child and possible fathers">
+    <defs><filter id="gl" x="-30%" y="-200%" width="160%" height="500%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    <rect x="40" y="38" width="${W-48}" height="346" rx="10" fill="#1a2440" stroke="#2f3d61"/>${guides}${g}</svg></div>
+    <div class="legend"><span style="--c:#ffd36b">Child’s band</span><span style="--c:#ff5fa2">Came from Mom</span><span style="--c:#4fc3ff">Must come from Dad</span></div>`;
+}
+function tapBand(bp){
+  if(G.found.includes(bp)) return;
+  if(E().bands.mom.includes(bp)){ G.found.push(bp); pts(10);
+    if(G.found.length===maternal().length){ render(); fb('mfb',true,`All ${G.found.length} of Mom’s bands found! The <b style="color:#1a8fd1">blue</b> bands left over must have come from the father.`);
+      document.getElementById('mnext').hidden=false; return; }
+    render(); fb('mfb',true,`Yes! ${E().mom.n} has that band too. ${maternal().length-G.found.length} more to find.`);
+  } else { pts(-5); fb('mfb',false,`${E().mom.n} doesn’t have that band, so it can’t have come from her. It must have come from <b>Dad</b>! Tap only the bands that line up with Mom’s lane.`); }
+}
+function pickDad(k){
+  const e=E(); G.lane=k;
+  if(k===e.father){ pts(G.tries===0?50:20); render(); fb('dfb',true,`Every blue band lines up with ${e.men.find(m=>m.k===k).n}’s lane.`); document.getElementById('dnext').hidden=false; return; }
+  G.tries++; pts(-10);
+  const have=paternal().filter(b=>e.bands[k].includes(b)).length, need=paternal().length;
+  render();
+  fb('dfb',false, have ? `${e.men.find(m=>m.k===k).n} shares ${have} of the ${need} dad bands, but a true father must match <b>every</b> one.${e.blood&&k==='kyle'?' Brothers share a lot of DNA, so this is a sneaky one!':''}` :
+    `None of ${e.men.find(m=>m.k===k).n}’s bands match the blue dad bands.`);
+}
+function checkBlood(){
+  const e=E(), picked=[...document.querySelectorAll('.checks input:checked')].map(i=>i.value);
+  const right=e.exclude.every(k=>picked.includes(k)) && picked.every(k=>e.exclude.includes(k));
+  if(right){ G.out=[...e.exclude]; pts(30); document.querySelectorAll('.checks input').forEach(i=>i.disabled=true);
+    fb('bfb',true,'Kevin (type A) and Karl (type O) have no B gene to pass on, so they’re ruled out. But Keith and Kyle are <b>both</b> type B, and blood type can’t tell them apart. Time for DNA!');
+    document.getElementById('bnext').hidden=false; }
+  else { pts(-10); fb('bfb',false,'Not quite. Mia’s B gene must come from Dad. Which men <b>don’t carry</b> a B gene at all? (Type A people carry A and maybe O. Type O people carry only O.)'); }
+}
+function confetti(){ const c=document.getElementById('confetti'); c.innerHTML='';
+  const cols=['#ffc83d','#ff5fa2','#4fc3ff','#7cf29c','#ffffff'];
+  for(let i=0;i<70;i++){ const s=document.createElement('i'); s.style.left=Math.random()*100+'vw'; s.style.background=cols[i%cols.length];
+    s.style.animationDuration=(1.6+Math.random()*1.6)+'s'; s.style.animationDelay=Math.random()*.5+'s'; c.appendChild(s); }
+  setTimeout(()=>c.innerHTML='',4000); }
+
+/* ---------- screens ---------- */
+function render(){
+  const e=E(), p=G.phase;
+  if(p==='title'){ app.innerHTML=`<div class="center"><div class="show" style="color:#ff9cc7">Live from the science stage…</div>
+    <h1>The Dee N. Ay Show</h1><p class="lede">Three families. One envelope each. You’re the show’s DNA scientist, and nobody hears the results until <b>you</b> read the gel.</p></div>
+    <div class="card">${HOST('<p>Welcome to the show! Before every big reveal, our lab compares DNA. Here’s how you read a paternity test:</p>')}
+    <div class="rules"><div class="rule"><b>Rule 1</b>A child gets half their DNA from Mom and half from Dad. Every band in the child’s DNA came from one parent or the other.</div>
+    <div class="rule"><b>Rule 2</b>Find the child’s bands that match Mom. The bands left over <i>must</i> have come from Dad.</div>
+    <div class="rule"><b>Rule 3</b>The real father has <b>every one</b> of those leftover bands. Missing even one? He is NOT the father!</div></div>
+    <button class="btn go" onclick="set('intro')">Start the show →</button>
+    <p class="small">3 episodes · about 5–8 minutes</p></div>`; return; }
+  if(p==='intro'){ app.innerHTML=`${progress()}<div class="card"><div class="step">Episode ${G.ep+1} of ${EP.length}</div><h2>${e.title}</h2>
+    ${HOST(`<p>${e.intro}</p>`)}
+    <div class="guests"><div class="guest mom"><span class="e">${e.mom.e}</span><b>${e.mom.n}</b><small>${e.mom.d}</small></div>
+      <div class="guest kid"><span class="e">${e.kid.e}</span><b>${e.kid.n}</b><small>${e.kid.d}</small></div>
+      ${e.men.map(m=>`<div class="guest"><span class="e">${m.e}</span><b>${m.n}</b><small>${m.d}</small></div>`).join('')}</div>
+    <div class="crowd center">👏 🙌 😱 👏</div>
+    <button class="btn go" onclick="set('${e.blood?'blood':'mom'}')">${e.blood?'Check blood types first →':'To the lab! →'}</button></div>`; return; }
+  if(p==='blood'){ app.innerHTML=`${progress()}<div class="card"><div class="step">Episode ${G.ep+1} · Lab step 1: blood types</div><h2>Who can we rule out?</h2>
+    ${HOST('<p>Every person carries <b>two</b> blood-type genes, one from each parent: A, B or O. Lena is type O, so she has two O genes and can only pass on an O. Mia is type B, so her <b>B gene had to come from her dad</b>.</p>')}
+    <table><tr><th>Possible dad</th><th>Blood type</th><th>Genes he could carry</th></tr>
+      ${e.men.map(m=>`<tr><td>${m.n}</td><td><b>${m.t}</b></td><td>${{A:'AA or AO',B:'BB or BO',O:'OO'}[m.t]}</td></tr>`).join('')}</table>
+    <p class="prompt">Check every man who <u>can’t</u> be Mia’s father:</p>
+    <div class="checks">${e.men.map(m=>`<label><input type="checkbox" value="${m.k}"> Rule out ${m.n} (type ${m.t})</label>`).join('')}</div>
+    <button class="btn alt" onclick="checkBlood()">Check</button><div class="fb" id="bfb" hidden></div>
+    <div id="bnext" hidden><button class="btn go" onclick="set('mom')">Run the DNA →</button></div></div>`; return; }
+  if(p==='mom'){ app.innerHTML=`${progress()}<div class="card"><div class="step">Episode ${G.ep+1} · ${e.blood?'Lab step 2':'Lab step 1'}</div><h2>Find Mom’s bands</h2>
+    <p class="prompt">Tap each of ${e.kid.n}’s gold bands that lines up with a band in ${e.mom.n}’s lane.</p>
+    ${gel()}<div class="fb" id="mfb" hidden></div>
+    <div id="mnext" hidden><button class="btn go" onclick="set('dad')">Now find the father →</button></div></div>`; return; }
+  if(p==='dad'){ app.innerHTML=`${progress()}<div class="card"><div class="step">Episode ${G.ep+1} · Final lab step</div><h2>Who has ALL the blue bands?</h2>
+    <p class="prompt">The <span style="color:#1a8fd1">blue</span> bands came from ${e.kid.n}’s father. Tap the lane of the man${e.men[0].e.includes('🐕')||e.kid.e==='🐶'?' (er… dog)':''} who has every one of them.</p>
+    ${gel()}<div class="fb" id="dfb" hidden></div>
+    <div id="dnext" hidden><button class="btn go" onclick="set('envelope')">Hand Dr. Dee the envelope 💌</button></div></div>`; return; }
+  if(p==='envelope'){ app.innerHTML=`${progress()}<div class="card center"><div class="step">Episode ${G.ep+1}</div>
+    ${HOST(`<p>The DNA results are in! ${e.men.map(m=>m.n).join(', ').replace(/, ([^,]*)$/,' and $1')}… the moment you’ve all been waiting for…</p>`)}
+    <div class="envelope">💌</div><div class="crowd">🥁 🥁 🥁</div>
+    <button class="btn go" onclick="set('reveal');confetti()">Open the envelope!</button></div>`; return; }
+  if(p==='reveal'){ const dad=e.men.find(m=>m.k===e.father), others=e.men.filter(m=>m.k!==e.father);
+    app.innerHTML=`${progress()}<div class="card center"><div class="step">Episode ${G.ep+1} · The results</div>
+    <div class="verdict yes">${dad.n}…<br>you ARE the father! ${dad.e}</div>
+    <div class="nots">${others.map(m=>`<div>${m.n}, you are NOT the father!</div>`).join('')}</div>
+    <div class="crowd">🎉 👏 😭 🙌 🎉</div></div>
+    <div class="card">${gel()}
+    <div class="note"><b>The science:</b> ${e.kid.n} got ${maternal().length} bands from ${e.mom.n} (pink). The other ${paternal().length} (blue) had to come from Dad, and only ${dad.n} has all of them.
+    ${G.ep===1?' Dog DNA works exactly like human DNA. Every puppy gets half from Mom and half from Dad.':''}
+    ${e.blood?' Notice that Kyle, Keith’s brother, shares several bands with him. Relatives share DNA! And if Keith had an <b>identical twin</b>, a standard test couldn’t tell them apart, because identical twins have the same DNA.':''}</div>
+    ${G.ep<EP.length-1?`<button class="btn go" onclick="nextEp()">Next episode →</button>`:`<button class="btn go" onclick="set('end')">See your ratings →</button>`}</div>`; return; }
+  if(p==='end'){ const max=EP.reduce((s,e)=>s+e.bands.kid.filter(b=>e.bands.mom.includes(b)).length*10+50+(e.blood?30:0),0);
+    const pct=Math.round(G.score/max*100), stars=pct>=90?5:pct>=75?4:pct>=55?3:pct>=35?2:1;
+    app.innerHTML=`<div class="center"><h1>That’s a wrap!</h1></div><div class="card center">
+    ${HOST('<p>What a season! Three families, three answers, all thanks to our lab scientist. Let’s see the ratings…</p>')}
+    <div style="font-size:2.4rem;letter-spacing:.15em">${'⭐'.repeat(stars)}${'☆'.repeat(5-stars)}</div>
+    <div class="show" style="font-size:1.3rem">${['','Canceled… but renewed!','Late-night hit','Prime-time hit','Smash hit','Number-one show in the nation!'][stars]}</div>
+    <div class="meter"><i style="width:${pct}%"></i></div><p class="small">Applause meter: ${G.score} of ${max} points</p>
+    <p class="small">Show this screen to your host!</p></div>
+    <div class="card"><h2>What you learned</h2><ul>
+      <li>Kids inherit <b>half their DNA from each parent</b>, so every band in a child’s DNA matches Mom or Dad.</li>
+      <li>A real father must match <b>all</b> the bands that didn’t come from Mom. Sharing one or two isn’t enough.</li>
+      <li><b>Blood types</b> can rule a man out, but they can’t prove he’s the father. Lots of people share a blood type.</li>
+      <li><b>Relatives</b> share DNA, which makes brothers tricky. Identical twins share all of it.</li>
+      <li>Real labs test about 20 DNA spots (called STRs) and report the results as a probability, often above 99.99%.</li></ul>
+    <button class="btn go" onclick="G=fresh();pts(0);set('title')">Play again</button>
+    <a class="btn alt" style="text-decoration:none;display:inline-block" href="index.html">← Back to all stations</a></div>`; return; }
+}
+function nextEp(){ G.ep++; G.found=[]; G.out=[]; G.tries=0; G.lane=null; set('intro'); }
+render();
+</script>
+</body>
+</html>
